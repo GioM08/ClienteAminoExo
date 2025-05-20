@@ -1,0 +1,69 @@
+﻿<Window x:Class="ClienteAminoExo.MainWindow"
+               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MusicClient"
+        mc:Ignorable="d"
+        Title="EXO Music Platform" Height="720" Width="1200"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+        Background= "{StaticResource FondoDegradado}">
+
+
+    <Grid>
+        <!-- Columnas: Barra lateral (izquierda) + contenido -->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="280"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+
+        <!-- Barra lateral -->
+        <Border
+            Background="{StaticResource GlassGradient}" 
+            CornerRadius="20" 
+            Margin="10"
+            Padding="10"
+            BorderBrush="{StaticResource GlassBorderColor}"
+            BorderThickness="1.5"
+            Effect="{StaticResource VidrioSombra}">
+            <StackPanel Background="{StaticResource ColorBarraLateral}" Orientation="Vertical">
+                <TextBlock Text="EXO" FontSize="30" FontWeight="Bold" 
+                       Foreground="{StaticResource ColorMorado}" Margin="20" HorizontalAlignment="Center" />
+
+                <Button Style="{StaticResource SidebarButtonStyle}" Tag="Inicio" Click="MenuButton_Click" Height="60">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image Source="/Recursos/home.png" Width="30" Height="30" Stretch="Uniform" VerticalAlignment="Center"/>
+                        <TextBlock Text="Inicio" FontSize="20" Foreground="White" 
+                               VerticalAlignment="Center" Margin="15,0,0,0"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{StaticResource SidebarButtonStyle}" Tag="Perfil" Click="MenuButton_Click" Height="60">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image Source="/Recursos/user.png" Width="30" Height="30" Stretch="Uniform" VerticalAlignment="Center"/>
+                        <TextBlock Text="Mi perfil" FontSize="20" Foreground="White" VerticalAlignment="Center" Margin="15,0,0,0"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{StaticResource SidebarButtonStyle}" Tag="Publicar" Click="MenuButton_Click" Height="60">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image Source="/Recursos/upload.png" Width="30" Height="30" Stretch="Uniform" VerticalAlignment="Center"/>
+                        <TextBlock Text="Publicar" FontSize="20" Foreground="White" VerticalAlignment="Center" Margin="15,0,0,0"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{StaticResource SidebarButtonStyle}" Tag="Notificaciones" Click="MenuButton_Click" Height="60">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image Source="/Recursos/bell.png" Width="30" Height="30" Stretch="Uniform" VerticalAlignment="Center"/>
+                        <TextBlock Text="Notificaciones" FontSize="20" Foreground="White" VerticalAlignment="Center" Margin="15,0,0,0"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Border>
+
+
+        <!-- Zona de contenido -->
+        <Frame x:Name="MainFrame" Grid.Column="1" NavigationUIVisibility="Hidden"/>
+    </Grid>
+</Window>

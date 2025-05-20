@@ -1,0 +1,62 @@
+﻿<Window x:Class="MusicClient.VentanaLogin"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MusicClient"
+        mc:Ignorable="d"
+        Title="VentanaLogin" Height="600" Width="450"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+        Background="{StaticResource FondoDegradado}">
+
+    <Grid Margin="20">
+        <Border Background="{StaticResource GlassGradient}" 
+                CornerRadius="20" 
+                Padding="25"
+                BorderBrush="{StaticResource GlassBorderColor}" 
+                BorderThickness="1.5"
+                Effect="{StaticResource VidrioSombra}">
+
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="300" Margin="15">
+
+                <TextBlock Text="EXO" FontSize="28" FontWeight="Bold" 
+                           Foreground="{StaticResource ColorMorado}" 
+                           HorizontalAlignment="Center" Margin="0,0,0,10"/>
+
+                <TextBlock Text="Iniciar sesión" FontSize="24" FontWeight="Bold" 
+                           Foreground="White" Margin="0,0,0,20" HorizontalAlignment="Center"/>
+
+                <!-- Campo: Usuario -->
+                <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Recursos/user.png" Width="20" Margin="0,0,10,0"/>
+                        <TextBox x:Name="TxtUsuario" BorderThickness="0" Background="Transparent" 
+                                 Foreground="White" FontSize="14" Width="250"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Campo: Contraseña -->
+                <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Recursos/lock.png" Width="20" Margin="0,0,10,0"/>
+                        <PasswordBox x:Name="TxtPassword" BorderThickness="0" Background="Transparent" 
+                                     Foreground="White" FontSize="14" Width="250"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Botón: Iniciar sesión -->
+                <Button Style="{StaticResource RoundedButtonStyle}" Content="Iniciar sesión" Click="BtnLogin_Click"/>
+
+
+                <TextBlock FontSize="12" TextAlignment="Center" Margin="0,10,0,0"
+                           Foreground="#CCCCCC" MouseDown="IrARegistro_MouseDown" Cursor="Hand">
+                    ¿No tienes cuenta? 
+                    <Run Text="Regístrate aquí" Foreground="{StaticResource ColorMorado}"/>
+                </TextBlock>
+
+
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
+  
