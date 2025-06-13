@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using ClienteAminoExo.Utils;
 
 namespace ClienteAminoExo.Servicios.REST
 {
@@ -31,7 +32,7 @@ namespace ClienteAminoExo.Servicios.REST
         {
             _http = new HttpClient
             {
-                BaseAddress = new Uri("http://localhost:3000") // Ajusta si tu backend tiene otro puerto
+                BaseAddress = new Uri(BackendConfig.BackendBaseUrl)
             };
             _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
@@ -48,7 +49,7 @@ namespace ClienteAminoExo.Servicios.REST
             // Asegurar URL absoluta si es relativa
             if (!string.IsNullOrEmpty(recurso?.url) && !Uri.IsWellFormedUriString(recurso.url, UriKind.Absolute))
             {
-                recurso.url = $"http://localhost:3000/{recurso.url.TrimStart('/')}";
+                recurso.url = $"{BackendConfig.BackendBaseUrl}/{recurso.url.TrimStart('/')}";
             }
 
             return recurso;
