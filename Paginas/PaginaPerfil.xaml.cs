@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ClienteAminoExo.Servicios.REST;
+using ClienteAminoExo.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,19 +22,143 @@ namespace ClienteAminoExo.Paginas
     /// </summary>
     public partial class PaginaPerfil : Page
     {
+
+        private UsuarioRestService.Usuario _usuarioActual;
         public PaginaPerfil()
         {
             InitializeComponent();
+            CargarPerfil();
         }
 
-        private void BtnModificar_Click(object sender, RoutedEventArgs e)
+
+        private async void CargarPerfil()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var servicio = new UsuarioRestService(SesionActual.Token);
+                var perfil = await servicio.ObtenerPerfilAsync();
+                _usuarioActual = perfil.usuario;
+                SesionActual.UsuarioId = _usuarioActual.usuarioId;
+
+                txtNombre.Text = _usuarioActual.nombre;
+                txtApellidos.Text = _usuarioActual.apellidos;
+                txtCorreo.Text = _usuarioActual.correo;
+                TbUsuario.Text = _usuarioActual.nombreUsuario;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al obtener el perfil: " + ex.Message);
+            }
         }
 
-        private void BtnGuardar_Click(object sender, RoutedEventArgs e)
+        private async void BtnGuardar_Click(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            // Validación de campos vacíos
+            if (string.IsNullOrWhiteSpace(txtNombre.Text) ||
+                string.IsNullOrWhiteSpace(txtApellidos.Text) ||
+                string.IsNullOrWhiteSpace(txtCorreo.Text) ||
+                string.IsNullOrWhiteSpace(txtNombreUsuario.Text))
+            {
+                MessageBox.Show("Por favor, completa todos los campos antes de guardar.", "Campos incompletos", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            try
+            {
+                var servicio = new UsuarioRestService(SesionActual.Token);
+
+                var response = await servicio.ActualizarUsuarioAsync(
+                    _usuarioActual.usuarioId,
+                    txtNombre.Text,
+                    txtApellidos.Text,
+                    txtCorreo.Text,
+                    txtNombreUsuario.Text
+                );
+
+                if (response.IsSuccessStatusCode)
+                {
+                    MessageBox.Show("Perfil actualizado correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                    // Puedes recargar el perfil si lo deseas
+                }
+                else
+                {
+                    string error = await response.Content.ReadAsStringAsync();
+                    MessageBox.Show("Error al actualizar perfil: " + error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error de conexión: " + ex.Message, "Error de red", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+
+
+        private void BtnAbrirCambiarContrasena_Click(object sender, RoutedEventArgs e)
+        {
+            var ventana = new VentanaCaambiarContrasena(); // ya usará el id global
+            ventana.ShowDialog();
+        }
+
+        private async void BtnEliminarCuenta_Click(object sender, RoutedEventArgs e)
+        {
+            var confirmacion = MessageBox.Show(
+                "¿Estás seguro de que deseas eliminar tu cuenta? Esta acción eliminará todos tus datos y no se puede deshacer.",
+                "Confirmar eliminación",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (confirmacion != MessageBoxResult.Yes)
+                return;
+
+            try
+            {
+                var servicio = new UsuarioRestService(SesionActual.Token);
+                var response = await servicio.EliminarUsuarioAsync(_usuarioActual.usuarioId);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    MessageBox.Show("Tu cuenta ha sido eliminada correctamente.", "Cuenta eliminada", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    // Limpiar sesión
+                    SesionActual.CerrarSesion();
+
+                    // Redirigir al login
+                    var ventanaLogin = new VentanaLogin();
+                    ventanaLogin.Show();
+
+                    // Cerrar ventana actual si estás dentro de un Frame
+                    Window.GetWindow(this)?.Close();
+                }
+                else
+                {
+                    string error = await response.Content.ReadAsStringAsync();
+                    MessageBox.Show("No se pudo eliminar la cuenta:\n" + error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al intentar eliminar la cuenta:\n" + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void BtnLogout_Click(object sender, RoutedEventArgs e)
+        {
+            var confirmacion = MessageBox.Show(
+                "¿Deseas cerrar sesión?",
+                "Cerrar sesión",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (confirmacion == MessageBoxResult.Yes)
+            {
+                SesionActual.CerrarSesion();
+
+                var ventanaLogin = new VentanaLogin();
+                ventanaLogin.Show();
+
+                Window.GetWindow(this)?.Close();
+            }
         }
     }
 }

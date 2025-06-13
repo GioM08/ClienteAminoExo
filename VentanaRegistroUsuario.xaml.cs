@@ -26,12 +26,17 @@ namespace ClienteAminoExo
         }
         private async void BtnRegistrar_Click(object sender, RoutedEventArgs e)
         {
-            string nombre = TxtUsuario.Text;
+            string nombreUsuario = TxtUsuario.Text;
+            string nombre = TxtNombre.Text;
+            string apellidos = TxtApellidos.Text;
             string correo = TxtCorreo.Text;
             string contrasena = TxtContrasena.Password;
             string confirmar = TxtConfirmar.Password;
+            string rol = "Fan";
 
-            if (string.IsNullOrWhiteSpace(nombre) || string.IsNullOrWhiteSpace(correo) ||
+            // Validación
+            if (string.IsNullOrWhiteSpace(nombreUsuario) || string.IsNullOrWhiteSpace(nombre) ||
+                string.IsNullOrWhiteSpace(apellidos) || string.IsNullOrWhiteSpace(correo) ||
                 string.IsNullOrWhiteSpace(contrasena) || string.IsNullOrWhiteSpace(confirmar))
             {
                 MessageBox.Show("Completa todos los campos", "Campos vacíos", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -47,14 +52,14 @@ namespace ClienteAminoExo
             try
             {
                 var servicio = new UsuarioRestService();
-                var respuesta = await servicio.CrearCuentaAsync(nombre, "", correo, contrasena); // Dejas apellidos en blanco si no lo pides
+                var respuesta = await servicio.CrearCuentaAsync(nombreUsuario, nombre, apellidos, correo, contrasena, rol);
 
                 if (respuesta.IsSuccessStatusCode)
                 {
                     MessageBox.Show("Cuenta creada exitosamente", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
-                    this.Close();
                     var ventanaLogin = new VentanaLogin();
                     ventanaLogin.Show();
+                    this.Close();
                 }
                 else
                 {
@@ -67,6 +72,7 @@ namespace ClienteAminoExo
                 MessageBox.Show($"Error de conexión: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
 
         private void IrVentanaLogin_MouseDown(object sender, MouseButtonEventArgs e)

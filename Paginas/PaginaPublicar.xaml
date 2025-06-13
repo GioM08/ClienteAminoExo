@@ -5,11 +5,92 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ClienteAminoExo.Paginas"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+     d:DesignHeight="700" d:DesignWidth="800"
       Title="PaginaPublicar"
       Background="{StaticResource FondoDegradado}">
 
-    <Grid>
-        <TextBlock Text="Bienvenido a Publicar" Foreground="White" FontSize="28" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Botón de regreso o logout si aplica -->
+        <Button ToolTip="Volver"
+                Width="45" Height="45"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Style="{StaticResource RoundedButtonStyle}"
+                Background="{StaticResource ColorMorado}"
+                FontSize="18"
+                Content="⬅"
+                Margin="0,10,10,0"
+                Grid.Row="0"/>
+
+        <!-- Contenido de publicación -->
+        <Border Grid.Row="1"
+                Background="{StaticResource GlassGradient}" 
+                CornerRadius="20" 
+                Padding="20"
+                BorderBrush="{StaticResource GlassBorderColor}"
+                BorderThickness="1.5"
+                Effect="{StaticResource VidrioSombra}">
+
+            <StackPanel VerticalAlignment="Top" Margin="20">
+
+                <TextBlock Text="Crear nueva publicación"
+                           FontSize="22"
+                           FontWeight="Bold"
+                           Foreground="White"
+                           Margin="0,0,0,20"/>
+
+                <!-- Título -->
+                <TextBlock Text="Título" Foreground="White" Margin="0,5"/>
+                <TextBox x:Name="TxtTitulo" FontSize="14" Padding="8"
+                         Background="#22FFFFFF" BorderBrush="#55FFFFFF" BorderThickness="1"
+                         Foreground="White"/>
+
+                <!-- Contenido -->
+                <TextBlock Text="Contenido" Foreground="White" Margin="0,15,0,5"/>
+                <TextBox x:Name="TxtContenido" FontSize="14" Padding="8"
+                         Background="#22FFFFFF" BorderBrush="#55FFFFFF" BorderThickness="1"
+                         Foreground="White" AcceptsReturn="True" Height="100" TextWrapping="Wrap"/>
+
+                <!-- Tipo de recurso -->
+                <TextBlock Text="Tipo de recurso" Foreground="White" Margin="0,15,0,5"/>
+                <ComboBox x:Name="CmbTipoRecurso" FontSize="14"
+                          Background="#22FFFFFF" BorderBrush="#55FFFFFF" BorderThickness="1"
+                          Foreground="White">
+                    <ComboBoxItem Content="Foto"/>
+                    <ComboBoxItem Content="Audio"/>
+                    <ComboBoxItem Content="Video"/>
+                </ComboBox>
+
+                <!-- Botón seleccionar archivo -->
+                <Button Content="Seleccionar archivo..." Margin="0,15,0,0"
+                        Style="{StaticResource RoundedButtonStyle}"
+                        Height="43"
+                        Click="BtnSeleccionarArchivo_Click"/>
+
+                <!-- Mostrar archivo seleccionado -->
+                <TextBlock x:Name="TxtArchivoSeleccionado" Foreground="White" FontStyle="Italic" Margin="0,5,0,0" Height="81"/>
+
+                <!-- Botón publicar -->
+                <Button Content="Publicar"
+                        Style="{StaticResource RoundedButtonStyle}"
+                        Background="{StaticResource ColorMorado}"
+                        Foreground="White"
+                        FontWeight="Bold"
+                        Margin="0,25,0,0"
+                        Height="40"
+                        Click="BtnPublicar_Click"/>
+
+                <!-- Estado -->
+                <TextBlock x:Name="TxtEstado"
+                           Foreground="LightGreen"
+                           FontWeight="SemiBold"
+                           Margin="0,15,0,0"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Page>

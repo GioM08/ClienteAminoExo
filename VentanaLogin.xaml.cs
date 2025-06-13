@@ -1,5 +1,6 @@
 ﻿using ClienteAminoExo;
 using ClienteAminoExo.Servicios.gRPC;
+using ClienteAminoExo.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,6 +47,7 @@ namespace ClienteAminoExo
                 {
                     MessageBox.Show($"Bienvenido, {resultado.NombreUsuario}", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
                     string token = resultado.Token;
+                    SesionActual.Token = resultado.Token;
                     var main = new MainWindow();
                     main.Show();
                     this.Close();

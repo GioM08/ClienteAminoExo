@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="VentanaRegistroUsuario" Height="600" Width="450"
+        Title="VentanaRegistroUsuario" Height="780" Width="500"
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
         Background="{StaticResource FondoDegradado}">
 
@@ -26,40 +26,76 @@
                            Foreground="White" Margin="0,0,0,20" HorizontalAlignment="Center"/>
 
                 <!-- Campo: Usuario -->
-                <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="/Recursos/user.png" Width="20" Margin="0,0,10,0"/>
-                        <TextBox x:Name="TxtUsuario" BorderThickness="0" Background="Transparent" 
-                                 Foreground="White" FontSize="14" />
-                    </StackPanel>
-                </Border>
+                <StackPanel Margin="0,0,0,10">
+                    <TextBlock Text="Nombre de usuario" Foreground="White" FontSize="12" Margin="5,0,0,3"/>
+                    <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Recursos/user.png" Width="20" Margin="0,0,10,0"/>
+                            <TextBox x:Name="TxtUsuario" BorderThickness="0" Background="Transparent" 
+                                     Foreground="White" FontSize="14" Width="248" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
 
                 <!-- Campo: Correo -->
-                <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="/Recursos/email.png" Width="20" Margin="0,0,10,0"/>
-                        <TextBox x:Name="TxtCorreo" BorderThickness="0" Background="Transparent" 
-                                 Foreground="White" FontSize="14"/>
-                    </StackPanel>
-                </Border>
+                <StackPanel Margin="0,0,0,10">
+                    <TextBlock Text="Correo electrónico" Foreground="White" FontSize="12" Margin="5,0,0,3"/>
+                    <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Recursos/email.png" Width="20" Margin="0,0,10,0"/>
+                            <TextBox x:Name="TxtCorreo" BorderThickness="0" Background="Transparent" 
+                                     Foreground="White" FontSize="14" Width="248"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
 
                 <!-- Campo: Contraseña -->
-                <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="/Recursos/lock.png" Width="20" Margin="0,0,10,0"/>
-                        <PasswordBox x:Name="TxtContrasena" BorderThickness="0" Background="Transparent" 
-                                     Foreground="White" FontSize="14"/>
-                    </StackPanel>
-                </Border>
+                <StackPanel Margin="0,0,0,10">
+                    <TextBlock Text="Contraseña" Foreground="White" FontSize="12" Margin="5,0,0,3"/>
+                    <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Recursos/lock.png" Width="20" Margin="0,0,10,0"/>
+                            <PasswordBox x:Name="TxtContrasena" BorderThickness="0" Background="Transparent" 
+                                         Foreground="White" FontSize="14" Width="248"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
 
                 <!-- Campo: Confirmar contraseña -->
-                <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="/Recursos/lock.png" Width="20" Margin="0,0,10,0"/>
-                        <PasswordBox x:Name="TxtConfirmar" BorderThickness="0" Background="Transparent" 
-                                     Foreground="White" FontSize="14"/>
-                    </StackPanel>
-                </Border>
+                <StackPanel Margin="0,0,0,10">
+                    <TextBlock Text="Confirmar contraseña" Foreground="White" FontSize="12" Margin="5,0,0,3"/>
+                    <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Recursos/lock.png" Width="20" Margin="0,0,10,0"/>
+                            <PasswordBox x:Name="TxtConfirmar" BorderThickness="0" Background="Transparent" 
+                                         Foreground="White" FontSize="14" Width="248"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Campo: Nombre real -->
+<StackPanel Margin="0,0,0,10">
+    <TextBlock Text="Nombre" Foreground="White" FontSize="12" Margin="5,0,0,3"/>
+    <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
+        <StackPanel Orientation="Horizontal">
+            <TextBox x:Name="TxtNombre" BorderThickness="0" Background="Transparent" 
+                     Foreground="White" FontSize="14" Width="270"/>
+        </StackPanel>
+    </Border>
+</StackPanel>
+
+<!-- Campo: Apellidos -->
+<StackPanel Margin="0,0,0,10">
+    <TextBlock Text="Apellidos" Foreground="White" FontSize="12" Margin="5,0,0,3"/>
+    <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
+        <StackPanel Orientation="Horizontal">
+            <TextBox x:Name="TxtApellidos" BorderThickness="0" Background="Transparent" 
+                     Foreground="White" FontSize="14" Width="270"/>
+        </StackPanel>
+    </Border>
+</StackPanel>
+
+
 
                 <!-- Botón: Registrarse -->
                 <Button Content="Registrarse"

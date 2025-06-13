@@ -27,22 +27,28 @@
                            Foreground="White" Margin="0,0,0,20" HorizontalAlignment="Center"/>
 
                 <!-- Campo: Usuario -->
-                <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="/Recursos/user.png" Width="20" Margin="0,0,10,0"/>
-                        <TextBox x:Name="TxtUsuario" BorderThickness="0" Background="Transparent" 
-                                 Foreground="White" FontSize="14" Width="250"/>
-                    </StackPanel>
-                </Border>
+                <StackPanel Margin="0,0,0,10">
+                    <TextBlock Text="Correo" Foreground="White" FontSize="12" Margin="5,0,0,3"/>
+                    <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Recursos/user.png" Width="20" Margin="0,0,10,0"/>
+                            <TextBox x:Name="TxtUsuario" BorderThickness="0" Background="Transparent" 
+                                     Foreground="White" FontSize="14" Width="250"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
 
                 <!-- Campo: Contraseña -->
-                <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="/Recursos/lock.png" Width="20" Margin="0,0,10,0"/>
-                        <PasswordBox x:Name="TxtPassword" BorderThickness="0" Background="Transparent" 
-                                     Foreground="White" FontSize="14" Width="250"/>
-                    </StackPanel>
-                </Border>
+                <StackPanel Margin="0,0,0,10">
+                    <TextBlock Text="Contraseña" Foreground="White" FontSize="12" Margin="5,0,0,3"/>
+                    <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Recursos/lock.png" Width="20" Margin="0,0,10,0"/>
+                            <PasswordBox x:Name="TxtPassword" BorderThickness="0" Background="Transparent" 
+                                         Foreground="White" FontSize="14" Width="250"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
 
                 <!-- Botón: Iniciar sesión -->
                 <Button Style="{StaticResource RoundedButtonStyle}" Content="Iniciar sesión" Click="BtnLogin_Click"/>

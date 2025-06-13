@@ -1,0 +1,61 @@
+﻿<Window x:Class="ClienteAminoExo.Paginas.VentanaCaambiarContrasena"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ClienteAminoExo.Paginas"
+        mc:Ignorable="d"
+        Title="Cambiar Contraseña" Height="250" Width="420"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+        Background="{StaticResource FondoDegradado}"
+        AllowsTransparency="False"
+        WindowStyle="None">
+
+    <Grid Margin="20">
+        <Border Background="{StaticResource GlassGradient}"
+                BorderBrush="{StaticResource GlassBorderColor}"
+                BorderThickness="1.5"
+                CornerRadius="20"
+                Effect="{StaticResource VidrioSombra}"
+                Padding="25">
+
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="300" >
+
+                <TextBlock Text="Nueva contraseña" FontSize="14"
+                           Foreground="{StaticResource ColorTexto}" Margin="5,0,0,3"/>
+
+                <PasswordBox x:Name="txtNuevaContrasena"
+                             FontSize="14"
+                             Padding="8"
+                             Background="#22FFFFFF"
+                             BorderBrush="#55FFFFFF"
+                             BorderThickness="1"
+                             Foreground="White"/>
+
+                <!-- Botón Actualizar -->
+                <!-- Grid para alinear los botones -->
+                <Grid Margin="0,15,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Botón Actualizar (izquierda) -->
+                    <Button Content="Actualizar"
+                            Style="{StaticResource RoundedButtonStyle}"
+                            Click="BtnActualizar_Click"
+                            Grid.Column="0"
+                            Margin="0,0,10,0"/>
+
+                    <!-- Botón Cancelar (derecha) -->
+                    <Button Content="Cancelar"
+                            Style="{StaticResource RoundedButtonStyle}"
+                            Background="Gray"
+                            Click="BtnCancelar_Click"
+                            Grid.Column="1"
+                            Margin="10,0,0,0"/>
+                </Grid>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
