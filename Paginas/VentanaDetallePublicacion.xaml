@@ -1,0 +1,79 @@
+﻿<Window x:Class="ClienteAminoExo.Paginas.VentanaDetallePublicacion"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Detalle de Publicación"
+        Height="600" Width="500"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Background="{StaticResource FondoDegradado}">
+
+    <Grid Margin="15">
+        <Border Background="{StaticResource GlassGradient}"
+                CornerRadius="20"
+                BorderBrush="{StaticResource GlassBorderColor}"
+                BorderThickness="1.5"
+                Padding="20"
+                Effect="{StaticResource VidrioSombra}">
+
+            <DockPanel LastChildFill="True">
+
+                <!-- Título de la publicación -->
+                <TextBlock x:Name="TxtTitulo"
+                           FontSize="20"
+                           FontWeight="Bold"
+                           Foreground="White"
+                           DockPanel.Dock="Top"
+                           TextWrapping="Wrap"
+                           Margin="0,0,0,10"/>
+
+                <!-- Contenido de la publicación -->
+                <TextBlock x:Name="TxtContenido"
+                           FontSize="14"
+                           Foreground="LightGray"
+                           DockPanel.Dock="Top"
+                           TextWrapping="Wrap"
+                           Margin="0,0,0,15"/>
+
+                <!-- Multimedia -->
+                <Border DockPanel.Dock="Top" Margin="0,0,0,15">
+                    <ContentControl x:Name="RecursoMultimedia"/>
+                </Border>
+
+                <!-- Reacciones -->
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            DockPanel.Dock="Top"
+                            Margin="0,0,0,15">
+                    <Button Content="👍" Width="50" Margin="5" Click="BtnLike_Click"/>
+                    <Button Content="👎" Width="50" Margin="5" Click="BtnDislike_Click"/>
+                    <Button Content="😃" Width="50" Margin="5" Click="BtnEmoji_Click"/>
+                </StackPanel>
+
+                <!-- Lista de comentarios -->
+                <GroupBox Header="Comentarios" Foreground="White" Margin="0,0,0,10">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Height="200">
+                        <ItemsControl x:Name="ListaComentarios">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderThickness="0,0,0,1" BorderBrush="Gray" Padding="5">
+                                        <StackPanel>
+                                            <TextBlock FontWeight="Bold" Foreground="White" Text="{Binding nombreUsuario}" />
+                                            <TextBlock Foreground="LightGray" Text="{Binding contenido}" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </GroupBox>
+
+                <!-- Enviar nuevo comentario -->
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="TxtComentario" Width="350" Height="30" Margin="0,0,10,0" />
+                    <Button Content="Enviar" Width="80" Click="BtnEnviarComentario_Click"/>
+                </StackPanel>
+
+            </DockPanel>
+        </Border>
+    </Grid>
+</Window>

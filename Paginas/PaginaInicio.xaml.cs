@@ -1,5 +1,6 @@
 ﻿using ClienteAminoExo.Servicios.REST;
 using ClienteAminoExo.Utils;
+using Reaccion;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -26,6 +27,10 @@ namespace ClienteAminoExo.Paginas
 
         private readonly RecursoRestService _recursoService = new(SesionActual.Token);
         private readonly PublicacionRestService _publicacionService = new(SesionActual.Token);
+        private readonly ReaccionRestService _reaccionService = new(SesionActual.Token);
+        private readonly ComentarioRestService _comentarioService = new(SesionActual.Token);
+
+
 
         public PaginaInicio()
         {
@@ -49,12 +54,17 @@ namespace ClienteAminoExo.Paginas
                     recurso = await _recursoService.ObtenerRecursoPorIdAsync(pub.recursoId);
                 }
 
-                var tarjeta = CrearTarjetaPublicacion(pub, recurso);
+                var likes = await _reaccionService.ObtenerConteoPorPublicacionAsync(pub.identificador);
+                var comentarios = await _comentarioService.ObtenerConteoPorPublicacionAsync(pub.identificador);
+
+                var tarjeta = CrearTarjetaPublicacion(pub, recurso, likes, comentarios);
                 WrapPanelPublicaciones.Children.Add(tarjeta);
+
+
             }
         }
 
-        private UIElement CrearTarjetaPublicacion(PublicacionDTO pub, RecursoDTO recurso)
+        private UIElement CrearTarjetaPublicacion(PublicacionDTO pub, RecursoDTO recurso, int likes, int comentarios)
         {
             var border = new Border
             {
@@ -146,29 +156,23 @@ namespace ClienteAminoExo.Paginas
                 Margin = new Thickness(0, 5, 0, 5)
             });
 
-            // Reacciones simuladas
-            var reacciones = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                Margin = new Thickness(0, 5, 0, 0)
-            };
+            var interacciones = new StackPanel { Orientation = Orientation.Horizontal };
+            interacciones.Children.Add(new TextBlock { Text = $"👍 {likes}", Foreground = Brushes.White, Margin = new Thickness(5, 0, 10, 0) });
+            interacciones.Children.Add(new TextBlock { Text = $"💬 {comentarios}", Foreground = Brushes.White });
+            stack.Children.Add(interacciones);
 
-            reacciones.Children.Add(new Image
-            {
-                Source = new BitmapImage(new Uri("pack://application:,,,/Recursos/like.png")),
-                Width = 16,
-                Margin = new Thickness(0, 0, 5, 0)
-            });
 
-            reacciones.Children.Add(new TextBlock
-            {
-                Text = "0", // simulado
-                Foreground = Brushes.White
-            });
-
-            stack.Children.Add(reacciones);
+            
             border.Child = stack;
+
+            border.MouseLeftButtonUp += (s, e) =>
+            {
+                var ventana = new VentanaDetallePublicacion(pub.identificador);
+                ventana.ShowDialog();
+            };
             return border;
         }
+
+
     }
 }

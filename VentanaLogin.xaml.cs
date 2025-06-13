@@ -1,5 +1,6 @@
 ﻿using ClienteAminoExo;
 using ClienteAminoExo.Servicios.gRPC;
+using ClienteAminoExo.Servicios.REST;
 using ClienteAminoExo.Utils;
 using System;
 using System.Collections.Generic;
@@ -48,6 +49,12 @@ namespace ClienteAminoExo
                     MessageBox.Show($"Bienvenido, {resultado.NombreUsuario}", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
                     string token = resultado.Token;
                     SesionActual.Token = resultado.Token;
+
+                    var perfilService = new UsuarioRestService(resultado.Token);
+                    var perfil = await perfilService.ObtenerPerfilAsync();
+                    SesionActual.UsuarioId = perfil.usuario.usuarioId;
+
+
                     var main = new MainWindow();
                     main.Show();
                     this.Close();
