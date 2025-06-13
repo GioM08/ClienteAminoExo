@@ -1,39 +1,68 @@
 syntax = "proto3";
 
+option csharp_namespace = "Usuario";
+
 package usuario;
 
+/**
+ * Servicio de autenticación y perfil de usuario.
+ * Permite a los clientes iniciar sesión y obtener información del perfil.
+ */
 service UsuarioService {
+  /**
+   * Verifica las credenciales del usuario e inicia sesión.
+   * Retorna un token si las credenciales son válidas.
+   */
   rpc Login (LoginRequest) returns (LoginResponse);
+
+  /**
+   * Devuelve la información del perfil del usuario autenticado.
+   */
   rpc Perfil (PerfilRequest) returns (PerfilResponse);
 }
 
+/**
+ * Solicitud para iniciar sesión.
+ */
 message LoginRequest {
-  string correo = 1;
-  string contrasena = 2;
+  string correo = 1;         // Correo electrónico del usuario
+  string contrasena = 2;     // Contraseña sin encriptar
 }
 
+/**
+ * Respuesta del servidor al intentar iniciar sesión.
+ */
 message LoginResponse {
-  bool exito = 1;
-  string mensaje = 2;
-  string nombreUsuario = 3;
-  string token = 4;
+  bool exito = 1;            // true si las credenciales son válidas
+  string mensaje = 2;        // Mensaje informativo (ej. "Login exitoso" o "Credenciales incorrectas")
+  string nombreUsuario = 3;  // Nombre de usuario si el login fue exitoso
+  string token = 4;          // JWT o token de autenticación
 }
 
+/**
+ * Solicitud para obtener el perfil del usuario.
+ */
 message PerfilRequest {
-  int32 usuarioId = 1;
+  int32 usuarioId = 1;       // ID del usuario autenticado
 }
 
+/**
+ * Respuesta con los datos del perfil del usuario.
+ */
 message PerfilResponse {
-  bool exito = 1;
-  string mensaje = 2;
-  UsuarioData usuario = 3;
+  bool exito = 1;            // true si se encontró el perfil
+  string mensaje = 2;        // Mensaje relacionado al resultado
+  UsuarioData usuario = 3;   // Datos completos del usuario
 }
 
+/**
+ * Datos básicos del perfil de usuario.
+ */
 message UsuarioData {
-  int32 usuarioId = 1;
-  string nombreUsuario = 2;
-  string nombre = 3;
-  string apellidos = 4;
-  string correo = 5;
-  string rol = 6;
+  int32 usuarioId = 1;       // ID único del usuario
+  string nombreUsuario = 2;  // Alias o nombre de usuario
+  string nombre = 3;         // Nombre real del usuario
+  string apellidos = 4;      // Apellidos del usuario
+  string correo = 5;         // Correo electrónico
+  string rol = 6;            // Rol asignado (ej. Miembro, Moderador, Administrador)
 }

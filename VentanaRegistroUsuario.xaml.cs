@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ClienteAminoExo.Servicios.REST;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace MusicClient
+namespace ClienteAminoExo
 {
     /// <summary>
     /// Lógica de interacción para VentanaRegistroUsuario.xaml
@@ -23,17 +24,50 @@ namespace MusicClient
         {
             InitializeComponent();
         }
-        private void BtnRegistrar_Click(object sender, RoutedEventArgs e)
+        private async void BtnRegistrar_Click(object sender, RoutedEventArgs e)
         {
-            // Más adelante: aquí irá la lógica para guardar al usuario en base de datos
+            string nombre = TxtUsuario.Text;
+            string correo = TxtCorreo.Text;
+            string contrasena = TxtContrasena.Password;
+            string confirmar = TxtConfirmar.Password;
 
-            MessageBox.Show("Cuenta creada (simulado)", "Registro", MessageBoxButton.OK, MessageBoxImage.Information);
+            if (string.IsNullOrWhiteSpace(nombre) || string.IsNullOrWhiteSpace(correo) ||
+                string.IsNullOrWhiteSpace(contrasena) || string.IsNullOrWhiteSpace(confirmar))
+            {
+                MessageBox.Show("Completa todos los campos", "Campos vacíos", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
-            // Redirigir al login o abrir MainWindow directamente
-            var ventanaLogin = new VentanaLogin();
-            ventanaLogin.Show();
-            this.Close();
+            if (contrasena != confirmar)
+            {
+                MessageBox.Show("Las contraseñas no coinciden", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            try
+            {
+                var servicio = new UsuarioRestService();
+                var respuesta = await servicio.CrearCuentaAsync(nombre, "", correo, contrasena); // Dejas apellidos en blanco si no lo pides
+
+                if (respuesta.IsSuccessStatusCode)
+                {
+                    MessageBox.Show("Cuenta creada exitosamente", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                    this.Close();
+                    var ventanaLogin = new VentanaLogin();
+                    ventanaLogin.Show();
+                }
+                else
+                {
+                    string error = await respuesta.Content.ReadAsStringAsync();
+                    MessageBox.Show($"Error al crear cuenta: {error}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error de conexión: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
+
 
         private void IrVentanaLogin_MouseDown(object sender, MouseButtonEventArgs e)
         {

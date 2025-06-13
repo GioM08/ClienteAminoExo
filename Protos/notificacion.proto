@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package notificacion;
+
+/**
+ * Servicio de notificaciones en tiempo real.
+ * Permite a los clientes suscribirse para recibir notificaciones
+ * dirigidas a un usuario específico mediante streaming.
+ */
+service NotificacionService {
+  /**
+   * Establece un stream para recibir notificaciones del usuario en tiempo real.
+   * El servidor enviará múltiples mensajes mientras el cliente permanezca conectado.
+   *
+   * @param StreamNotificacionesRequest con el ID del usuario suscrito.
+   * @returns stream de NotificacionResponse cada vez que haya una nueva notificación.
+   */
+  rpc StreamNotificaciones (StreamNotificacionesRequest) returns (stream NotificacionResponse);
+}
+
+/**
+ * Solicitud para iniciar el stream de notificaciones.
+ */
+message StreamNotificacionesRequest {
+  int32 usuarioId = 1; // ID del usuario que desea recibir notificaciones en tiempo real
+}
+
+/**
+ * Respuesta del servidor con los datos de una notificación.
+ */
+message NotificacionResponse {
+  int32 notificacionId = 1;               // ID único de la notificación
+  string tipo = 2;                        // Tipo de notificación (ej. "reaccion", "comentario", "sistema", etc.)
+  string mensaje = 3;                     // Mensaje de texto que describe la notificación
+  map<string, string> datosAdicionales = 4; // Información adicional (ej. { "recursoId": "123", "accion": "eliminado" })
+  string fecha = 5;                       // Fecha/hora en formato ISO 8601 o similar
+}

@@ -33,9 +33,10 @@
     <Resource Include="Recursos\upload.png" />
     <Resource Include="Recursos\user.png" />
   </ItemGroup>
-<ItemGroup>
-  <Protobuf Include="Protos\usuario.proto" GrpcServices="Client" />
-</ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Utils\" />
+  </ItemGroup>
 
   
 

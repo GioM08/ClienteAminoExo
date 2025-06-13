@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package estadistica;
+
+/**
+ * Servicio para obtener estadísticas relacionadas con las publicaciones.
+ * Permite consultar métricas agregadas como las publicaciones con más likes y comentarios.
+ */
+service EstadisticasService {
+  /**
+   * Devuelve estadísticas generales del sistema, incluyendo
+   * las publicaciones con más likes y comentarios.
+   *
+   * @param EstadisticasRequest (vacío)
+   * @returns EstadisticasResponse con los datos resumidos.
+   */
+  rpc ObtenerEstadisticas (EstadisticasRequest) returns (EstadisticasResponse);
+}
+
+/**
+ * Solicitud vacía para obtener estadísticas generales.
+ */
+message EstadisticasRequest {}
+
+/**
+ * Respuesta con estadísticas agregadas del sistema.
+ */
+message EstadisticasResponse {
+  /**
+   * Representa una publicación destacada por alguna métrica (likes, comentarios).
+   */
+  message TopPublicacion {
+    int32 publicacionId = 1; // ID de la publicación destacada
+    int32 total = 2;         // Total de interacciones (likes o comentarios)
+  }
+
+  TopPublicacion topLikes = 1;        // Publicación con mayor número de likes
+  TopPublicacion topComentarios = 2;  // Publicación con mayor número de comentarios
+}

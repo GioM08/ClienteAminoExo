@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package reaccion;
+
+/**
+ * Servicio de reacciones en tiempo real.
+ * Permite suscribirse a un stream de notificaciones de reacciones
+ * para una publicación específica.
+ */
+service ReaccionService {
+  /**
+   * Inicia un stream que envía notificaciones en tiempo real
+   * cada vez que un usuario reacciona a una publicación.
+   *
+   * @param ReaccionFiltro Contiene el ID de la publicación a observar.
+   * @returns stream de ReaccionNotificacion con los datos de cada nueva reacción.
+   */
+  rpc StreamReacciones(ReaccionFiltro) returns (stream ReaccionNotificacion);
+}
+
+/**
+ * Filtro que indica a qué publicación suscribirse
+ * para recibir notificaciones de reacciones.
+ */
+message ReaccionFiltro {
+  int32 publicacionId = 1; // ID de la publicación objetivo
+}
+
+/**
+ * Notificación emitida cuando un usuario reacciona a una publicación.
+ */
+message ReaccionNotificacion {
+  string tipo = 1;           // Tipo de reacción: "like", "love", etc.
+  int32 usuarioId = 2;       // ID del usuario que reaccionó
+  int32 publicacionId = 3;   // ID de la publicación relacionada
+  string nombreUsuario = 4;  // Nombre del usuario que reaccionó
+}
