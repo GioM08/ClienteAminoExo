@@ -28,16 +28,42 @@ namespace ClienteAminoExo.Paginas
     {
 
         private readonly RecursoGrpcService _recursoGrpc = new();
-        private readonly PublicacionRestService _publicacionRest = new();
+        private readonly PublicacionRestService _publicacionRest = new(SesionActual.Token);
         private string rutaArchivoSeleccionado;
         int usuarioId = SesionActual.UsuarioId;
         private int recursoIdSubido = 0; // se actualiza solo si se sube recurso
+        private UsuarioRestService.Usuario _usuarioActual;
 
 
         public PaginaPublicar()
         {
             InitializeComponent();
+            BtnSeleccionarArchivo.IsEnabled = false;
+            BtnPublicar.IsEnabled = false;
+            CargarPerfil();
         }
+
+        private async void CargarPerfil()
+        {
+            try
+            {
+                var servicio = new UsuarioRestService(SesionActual.Token);
+                var perfil = await servicio.ObtenerPerfilAsync();
+                _usuarioActual = perfil.usuario;
+                SesionActual.UsuarioId = _usuarioActual.usuarioId;
+                usuarioId = _usuarioActual.usuarioId;
+
+                BtnSeleccionarArchivo.IsEnabled = true;
+                BtnPublicar.IsEnabled = true;
+
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al obtener el perfil: " + ex.Message);
+            }
+        }
+
 
         private async void BtnSeleccionarArchivo_Click(object sender, RoutedEventArgs e)
         {
@@ -63,7 +89,7 @@ namespace ClienteAminoExo.Paginas
 
             TxtEstado.Text = "Subiendo recurso al servidor...";
 
-            var resultado = await _recursoGrpc.SubirRecursoAsync(
+            var resultado = await _recursoGrpc.CrearRecursoAsync(
                 rutaArchivoSeleccionado, tipo, formato, tamano, usuarioId
             );
 

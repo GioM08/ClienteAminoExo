@@ -9,7 +9,7 @@
       Title="PaginaInicio"
       Background="{StaticResource FondoDegradado}">
     <ScrollViewer>
-        <WrapPanel Margin="20">
+        <WrapPanel  x:Name="WrapPanelPublicaciones" Margin="20">
             <!-- Tarjeta 1 -->
             <Border Background="{StaticResource ColorBarraLateral}" CornerRadius="10" Padding="10" Margin="10" Width="250">
                 <StackPanel>

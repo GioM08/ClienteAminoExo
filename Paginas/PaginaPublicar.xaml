@@ -67,16 +67,16 @@
                 </ComboBox>
 
                 <!-- Botón seleccionar archivo -->
-                <Button Content="Seleccionar archivo..." Margin="0,15,0,0"
+                <Button Name="BtnSeleccionarArchivo" Content="Seleccionar archivo..." Margin="0,15,0,0"
                         Style="{StaticResource RoundedButtonStyle}"
                         Height="43"
                         Click="BtnSeleccionarArchivo_Click"/>
 
                 <!-- Mostrar archivo seleccionado -->
-                <TextBlock x:Name="TxtArchivoSeleccionado" Foreground="White" FontStyle="Italic" Margin="0,5,0,0" Height="81"/>
+                <TextBlock x:Name="TxtArchivoSeleccionado" Foreground="White" FontStyle="Italic" Margin="0,5,0,0" Height="23"/>
 
                 <!-- Botón publicar -->
-                <Button Content="Publicar"
+                <Button Name="BtnPublicar" Content="Publicar"
                         Style="{StaticResource RoundedButtonStyle}"
                         Background="{StaticResource ColorMorado}"
                         Foreground="White"

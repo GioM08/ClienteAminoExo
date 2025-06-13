@@ -1,4 +1,5 @@
 ﻿using Google.Protobuf;
+using Grpc.Core;
 using Grpc.Net.Client;
 using Recurso;
 using System;
@@ -13,9 +14,9 @@ namespace ClienteAminoExo.Servicios.gRPC
 
     public class RecursoGrpcService
     {
-        private readonly string grpcUrl = "http://localhost:50051"; // Ajusta si estás usando otro puerto
+        private readonly string grpcUrl = "http://localhost:50054"; // Ajusta si estás usando otro puerto
 
-        public async Task<(bool exito, int identificador, string mensaje)> SubirRecursoAsync(
+        public async Task<(bool exito, int identificador, string mensaje)> CrearRecursoAsync(
             string rutaArchivo,
             string tipo,
             string formato,
@@ -51,5 +52,32 @@ namespace ClienteAminoExo.Servicios.gRPC
                 mensaje: respuesta.Mensaje
             );
         }
+
+        public async Task<(bool exito, byte[] archivo, string mensaje)> DescargarRecursoAsync(string tipo, int identificador)
+        {
+            using var channel = Grpc.Net.Client.GrpcChannel.ForAddress(grpcUrl);
+            var client = new RecursoService.RecursoServiceClient(channel);
+
+            var request = new DescargarRecursoRequest
+            {
+                Tipo = tipo,
+                Identificador = identificador
+            };
+
+            try
+            {
+                var respuesta = await client.DescargarRecursoAsync(request);
+
+                if (!respuesta.Exito)
+                    return (false, null, respuesta.Mensaje);
+
+                return (true, respuesta.Archivo.ToByteArray(), "Recurso descargado exitosamente");
+            }
+            catch (RpcException ex)
+            {
+                return (false, null, $"Error al descargar recurso: {ex.Status.Detail}");
+            }
+        }
+
     }
 }
