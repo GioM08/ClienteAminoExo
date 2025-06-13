@@ -14,10 +14,14 @@ namespace ClienteAminoExo.Servicios.REST
         public int identificador { get; set; }
         public string tipo { get; set; }          // "Foto", "Audio", "Video"
         public string formato { get; set; }       // "jpg", "mp3", "mp4"
+
         [JsonProperty("URL")]
         public string url { get; set; }
-    }
 
+        public int usuarioId { get; set; }
+        public string resolucion { get; set; }    // Solo para Foto/Video
+        public string duracion { get; set; }      // Solo para Audio
+    }
 
     public class RecursoRestService
     {
@@ -39,7 +43,16 @@ namespace ClienteAminoExo.Servicios.REST
                 return null;
 
             var json = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<RecursoDTO>(json);
+            var recurso = JsonConvert.DeserializeObject<RecursoDTO>(json);
+
+            // Asegurar URL absoluta si es relativa
+            if (!string.IsNullOrEmpty(recurso?.url) && !Uri.IsWellFormedUriString(recurso.url, UriKind.Absolute))
+            {
+                recurso.url = $"http://localhost:3000/{recurso.url.TrimStart('/')}";
+            }
+
+            return recurso;
         }
+
     }
 }
