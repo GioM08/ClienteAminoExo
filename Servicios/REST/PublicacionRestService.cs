@@ -8,6 +8,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Net.WebRequestMethods;
+using ClienteAminoExo.Utils;
 
 namespace ClienteAminoExo.Servicios.REST
 {
@@ -37,13 +38,13 @@ namespace ClienteAminoExo.Servicios.REST
         public PublicacionRestService(string token)
         {
             _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri("http://localhost:3000"); // Ajusta si es necesario
+            _httpClient.BaseAddress = new Uri(BackendConfig.BackendBaseUrl);
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
 
         public async Task<bool> CrearPublicacionAsync(PublicacionDTO publicacion)
         {
-            var response = await _httpClient.PostAsJsonAsync("http://localhost:3000/api/publicaciones", publicacion);
+            var response = await _httpClient.PostAsJsonAsync("api/publicaciones", publicacion);
             return response.IsSuccessStatusCode;
         }
 

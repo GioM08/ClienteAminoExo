@@ -73,7 +73,7 @@ namespace ClienteAminoExo.Paginas
                 // Verificar si la URL es válida
                 if (!string.IsNullOrEmpty(recurso.url) && !Uri.IsWellFormedUriString(recurso.url, UriKind.Absolute))
                 {
-                    recurso.url = $"http://localhost:3000/{recurso.url.TrimStart('/')}";
+                    recurso.url = $"{BackendConfig.BackendBaseUrl}/{recurso.url.TrimStart('/')}";
                 }
 
                 if (!string.IsNullOrEmpty(recurso.url))

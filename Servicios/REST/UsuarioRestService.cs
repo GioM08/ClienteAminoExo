@@ -9,6 +9,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using ClienteAminoExo.Utils;
 
 namespace ClienteAminoExo.Servicios.REST
 {
@@ -20,7 +21,7 @@ namespace ClienteAminoExo.Servicios.REST
         {
             _httpClient = new HttpClient
             {
-                BaseAddress = new Uri("http://localhost:3000/")
+                BaseAddress = new Uri(BackendConfig.BackendBaseUrl)
             };
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
@@ -29,7 +30,7 @@ namespace ClienteAminoExo.Servicios.REST
         {
             _httpClient = new HttpClient
             {
-                BaseAddress = new Uri("http://localhost:3000/")
+                BaseAddress = new Uri(BackendConfig.BackendBaseUrl)
             };
         }
 
