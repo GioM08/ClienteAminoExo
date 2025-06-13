@@ -26,6 +26,15 @@
     <PackageReference Include="System.Text.Json" Version="9.0.5" />
   </ItemGroup>
 
+  <!-- Genera las clases C# a partir de los archivos .proto -->
+  <ItemGroup>
+    <Protobuf Include="Protos/usuario.proto" GrpcServices="Client" />
+    <Protobuf Include="Protos/notificacion.proto" GrpcServices="Client" />
+    <Protobuf Include="Protos/estadistica.proto" GrpcServices="Client" />
+    <Protobuf Include="Protos/reaccion.proto" GrpcServices="Client" />
+    <Protobuf Include="Protos/recurso.proto" GrpcServices="Client" />
+  </ItemGroup>
+
   <ItemGroup>
     <Resource Include="Recursos\bell.png" />
     <Resource Include="Recursos\home.png" />
