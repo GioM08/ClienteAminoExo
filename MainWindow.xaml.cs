@@ -53,6 +53,9 @@ namespace ClienteAminoExo
                     case "Estadisticas":
                         MainFrame.Navigate(new Paginas.PaginaEstadisticas());
                         break;
+                    case "Busqueda":
+                        MainFrame.Navigate(new Paginas.PaginaBusqueda());
+                        break;
                 }
             }
         }

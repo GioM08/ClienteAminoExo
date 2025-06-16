@@ -30,9 +30,10 @@ namespace ClienteAminoExo.Paginas
         {
             var nueva = txtNuevaContrasena.Password;
 
-            if (string.IsNullOrWhiteSpace(nueva))
+            string errorValidacion = Validaciones.ValidarPassword(nueva);
+            if (errorValidacion != null)
             {
-                MessageBox.Show("Escribe una nueva contraseña.");
+                MessageBox.Show(errorValidacion);
                 return;
             }
 

@@ -67,13 +67,40 @@ namespace ClienteAminoExo.Paginas
 
         private async void BtnGuardar_Click(object sender, RoutedEventArgs e)
         {
-            // Validación de campos vacíos
             if (string.IsNullOrWhiteSpace(txtNombre.Text) ||
                 string.IsNullOrWhiteSpace(txtApellidos.Text) ||
                 string.IsNullOrWhiteSpace(txtCorreo.Text) ||
                 string.IsNullOrWhiteSpace(txtNombreUsuario.Text))
             {
                 MessageBox.Show("Por favor, completa todos los campos antes de guardar.", "Campos incompletos", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            string errorNombre = Validaciones.ValidarNombre(txtNombre.Text, "Nombre");
+            if (errorNombre != null)
+            {
+                MessageBox.Show(errorNombre, "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            string errorApellidos = Validaciones.ValidarNombre(txtApellidos.Text, "Apellidos");
+            if (errorApellidos != null)
+            {
+                MessageBox.Show(errorApellidos, "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            string errorCorreo = Validaciones.ValidarCorreo(txtCorreo.Text);
+            if (errorCorreo != null)
+            {
+                MessageBox.Show(errorCorreo, "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            string errorUsuario = Validaciones.ValidarNombreDeUsuario(txtNombreUsuario.Text);
+            if (errorUsuario != null)
+            {
+                MessageBox.Show(errorUsuario, "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
