@@ -15,10 +15,11 @@ namespace ClienteAminoExo.Servicios.REST
 
     public class ReaccionDTO
     {
-        public int reaccionId { get; set; } // opcional al crear
-        public string tipo { get; set; } // "like", "dislike", "emoji"
+        public int reaccionId { get; set; } 
+        public string tipo { get; set; } 
         public int publicacionId { get; set; }
         public int usuarioId { get; set; }
+        public string nombreUsuario { get; set; }
         public DateTime fecha { get; set; }
     }
 
@@ -83,6 +84,45 @@ namespace ClienteAminoExo.Servicios.REST
             var response = await _httpClient.PutAsJsonAsync($"api/reacciones/{reaccion.reaccionId}", reaccion);
             return response.IsSuccessStatusCode;
         }
+
+        public async Task<int?> ObtenerReaccionIdAsync(int usuarioId, int publicacionId)
+        {
+            var url = $"{BackendConfig.BackendBaseUrl}/reacciones/buscar?usuarioId={usuarioId}&publicacionId={publicacionId}";
+
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", SesionActual.Token);
+
+            var response = await client.GetAsync(url);
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            var json = await response.Content.ReadAsStringAsync();
+            var data = JsonConvert.DeserializeObject<dynamic>(json);
+
+            return (int?)data.reaccionId;
+        }
+
+        public async Task<string?> ObtenerTipoReaccionAsync(int usuarioId, int publicacionId)
+        {
+            var url = $"{BackendConfig.BackendBaseUrl}/reacciones/buscar?usuarioId={usuarioId}&publicacionId={publicacionId}";
+
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", SesionActual.Token);
+
+            var response = await client.GetAsync(url);
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            var json = await response.Content.ReadAsStringAsync();
+            var data = JsonConvert.DeserializeObject<dynamic>(json);
+
+            return (string?)data.tipo;
+        }
+
+
+
 
 
     }

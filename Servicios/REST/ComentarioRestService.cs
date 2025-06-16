@@ -14,11 +14,13 @@ namespace ClienteAminoExo.Servicios.REST
 
     public class ComentarioDTO
     {
-        public int comentarioId { get; set; } // opcional
-        public string contenido { get; set; }
+        public int comentarioId { get; set; } 
+        public string texto { get; set; }
         public int publicacionId { get; set; }
         public int usuarioId { get; set; }
-        public DateTime fecha { get; set; }
+
+        public string nombreUsuario { get; set; }
+
     }
 
 

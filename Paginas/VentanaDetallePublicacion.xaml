@@ -44,21 +44,34 @@
                             HorizontalAlignment="Center"
                             DockPanel.Dock="Top"
                             Margin="0,0,0,15">
+                    <Button Content="Descargar recurso"
+                            Margin="10"
+                            Click="BtnDescargarRecurso_Click"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"/>
                     <Button Content="👍" Width="50" Margin="5" Click="BtnLike_Click"/>
                     <Button Content="👎" Width="50" Margin="5" Click="BtnDislike_Click"/>
                     <Button Content="😃" Width="50" Margin="5" Click="BtnEmoji_Click"/>
                 </StackPanel>
 
+                <!-- Panel de comentarios-->
+                <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Center" Margin="0,0,0,15">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox x:Name="TxtComentario" Width="240" Height="30" Margin="0,0,10,0" />
+                        <Button Content="Enviar" Width="80" Click="BtnEnviarComentario_Click" Height="33"/>
+                    </StackPanel>
+                </StackPanel>
+
                 <!-- Lista de comentarios -->
-                <GroupBox Header="Comentarios" Foreground="White" Margin="0,0,0,10">
+                <GroupBox Header="Comentarios" Foreground="White" Margin="0,10,0,0" HorizontalAlignment="Center" Width="400">
                     <ScrollViewer VerticalScrollBarVisibility="Auto" Height="200">
                         <ItemsControl x:Name="ListaComentarios">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border BorderThickness="0,0,0,1" BorderBrush="Gray" Padding="5">
                                         <StackPanel>
-                                            <TextBlock FontWeight="Bold" Foreground="White" Text="{Binding nombreUsuario}" />
-                                            <TextBlock Foreground="LightGray" Text="{Binding contenido}" TextWrapping="Wrap"/>
+                                            <TextBlock FontWeight="Bold" Foreground="White" Text="{Binding usuarioId}" />
+                                            <TextBlock Foreground="LightGray" Text="{Binding texto}" TextWrapping="Wrap"/>
                                         </StackPanel>
                                     </Border>
                                 </DataTemplate>
@@ -66,12 +79,18 @@
                         </ItemsControl>
                     </ScrollViewer>
                 </GroupBox>
+                <Button x:Name="BtnEliminarPublicacion"
+                        Content="🗑 Eliminar Publicación"
+                        Width="200"
+                        Height="35"
+                        HorizontalAlignment="Center"
+                        Margin="0,10,0,0"
+                        Click="BtnEliminarPublicacion_Click"
+                        Visibility="Collapsed"
+                        Background="Red"
+                        Foreground="White"
+                        FontWeight="Bold"/>
 
-                <!-- Enviar nuevo comentario -->
-                <StackPanel Orientation="Horizontal">
-                    <TextBox x:Name="TxtComentario" Width="350" Height="30" Margin="0,0,10,0" />
-                    <Button Content="Enviar" Width="80" Click="BtnEnviarComentario_Click"/>
-                </StackPanel>
 
             </DockPanel>
         </Border>

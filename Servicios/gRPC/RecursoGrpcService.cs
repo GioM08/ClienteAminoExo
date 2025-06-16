@@ -1,4 +1,5 @@
-﻿using Google.Protobuf;
+﻿using ClienteAminoExo.Utils;
+using Google.Protobuf;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Recurso;
@@ -14,48 +15,76 @@ namespace ClienteAminoExo.Servicios.gRPC
 
     public class RecursoGrpcService
     {
-        private readonly string grpcUrl = "http://localhost:50054"; // Ajusta si estás usando otro puerto
+        private readonly RecursoService.RecursoServiceClient _cliente;
 
-        public async Task<(bool exito, int identificador, string mensaje)> CrearRecursoAsync(
+        public RecursoGrpcService()
+        {
+            AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+            var canal = GrpcChannel.ForAddress("http://localhost:50054");
+            _cliente = new RecursoService.RecursoServiceClient(canal);
+        }
+
+        public async Task<CrearRecursoResponse> CrearRecursoAsync(
             string rutaArchivo,
             string tipo,
-            string formato,
-            long tamano,
+            int formato,
+            int tamano,
             int usuarioId,
-            string resolucion = null,
-            string duracion = null)
+            int? publicacionId,
+            string jwt,
+            int? resolucion = null,
+            int? duracion = null)
         {
-            using var channel = GrpcChannel.ForAddress(grpcUrl);
-            var client = new RecursoService.RecursoServiceClient(channel);
-
-            var archivoBytes = await File.ReadAllBytesAsync(rutaArchivo);
-
-            var request = new CrearRecursoRequest
+            try
             {
-                Tipo = tipo,
-                Formato = formato,
-                Tamano = tamano.ToString(),
-                UsuarioId = usuarioId,
-                Archivo = ByteString.CopyFrom(archivoBytes)
-            };
+                if (!File.Exists(rutaArchivo))
+                    return new CrearRecursoResponse { Exito = false, Mensaje = "El archivo no existe" };
 
-            if (tipo == "Foto" || tipo == "Video")
-                request.Resolucion = resolucion ?? "1920x1080";
-            else if (tipo == "Audio")
-                request.Duracion = duracion ?? "00:01:00";
+                var archivoBytes = await File.ReadAllBytesAsync(rutaArchivo);
+                if (archivoBytes.Length == 0)
+                    return new CrearRecursoResponse { Exito = false, Mensaje = "El archivo está vacío" };
 
-            var respuesta = await client.CrearRecursoAsync(request);
+                var identificadorTemporal = DateTime.Now.Ticks.GetHashCode() & 0xfffffff;
 
-            return (
-                exito: respuesta.Exito,
-                identificador: respuesta.Identificador,
-                mensaje: respuesta.Mensaje
-            );
+                var request = new CrearRecursoRequest
+                {
+                    Tipo = tipo,
+                    Identificador = identificadorTemporal,
+                    Formato = formato,
+                    Tamano = tamano,
+                    UsuarioId = usuarioId,
+                    Archivo = ByteString.CopyFrom(archivoBytes)
+                };
+
+                if (publicacionId.HasValue)
+                    request.PublicacionId = publicacionId.Value;
+
+                if (tipo == "Foto" || tipo == "Video")
+                    request.Resolucion = resolucion ?? 1920;
+                else if (tipo == "Audio")
+                    request.Duracion = duracion ?? 60;
+
+                var headers = new Metadata
+                {
+                    { "Authorization", $"Bearer {jwt}" },
+                    { "User-Role", SesionActual.Rol ?? "" }
+                };
+
+                return await _cliente.CrearRecursoAsync(request, headers);
+            }
+            catch (RpcException ex)
+            {
+                return new CrearRecursoResponse
+                {
+                    Exito = false,
+                    Mensaje = $"Error del servidor: {ex.Status.Detail}"
+                };
+            }
         }
 
         public async Task<(bool exito, byte[] archivo, string mensaje)> DescargarRecursoAsync(string tipo, int identificador)
         {
-            using var channel = Grpc.Net.Client.GrpcChannel.ForAddress(grpcUrl);
+            using var channel = Grpc.Net.Client.GrpcChannel.ForAddress("http://localhost:50054");
             var client = new RecursoService.RecursoServiceClient(channel);
 
             var request = new DescargarRecursoRequest

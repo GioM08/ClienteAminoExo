@@ -13,6 +13,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using ClienteAminoExo.Servicios.gRPC;
+
 
 namespace ClienteAminoExo.Paginas
 {
@@ -21,42 +23,67 @@ namespace ClienteAminoExo.Paginas
     /// </summary>
     public partial class VentanaDetallePublicacion : Window
     {
-        private readonly int _publicacionId;
+        private readonly PublicacionDTO _publicacion;
+        private readonly RecursoGrpcService _recursoGrpcService = new();
+
+
 
         private readonly PublicacionRestService _publicacionService = new(SesionActual.Token);
         private readonly ComentarioRestService _comentarioService = new(SesionActual.Token);
         private readonly ReaccionRestService _reaccionService = new(SesionActual.Token);
         private readonly RecursoRestService _recursoService = new(SesionActual.Token);
 
-        public VentanaDetallePublicacion(int publicacionId)
+        public VentanaDetallePublicacion(PublicacionDTO publicacion)
         {
             InitializeComponent();
-            _publicacionId = publicacionId;
+            _publicacion = publicacion;
             CargarPublicacion();
+            this.Loaded += VentanaDetallePublicacion_Loaded;
+        }
+
+        private async void VentanaDetallePublicacion_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (_publicacion.recurso == null || _publicacion.recurso.identificador == 0)
+            {
+                try
+                {
+                    _publicacion.recurso = await _recursoService.ObtenerRecursoPorIdAsync(_publicacion.recursoId);
+
+                    if (_publicacion.recurso == null)
+                    {
+                        MessageBox.Show("No se pudo obtener información del recurso.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al cargar recurso: {ex.Message}");
+                }
+            }
+
+            if (SesionActual.Rol == "Moderador" || SesionActual.Rol == "Administrador")
+            {
+                BtnEliminarPublicacion.Visibility = Visibility.Visible;
+            }
         }
 
         private async void CargarPublicacion()
         {
-            var publicaciones = await _publicacionService.ObtenerPublicacionesAsync();
-            var pub = publicaciones.FirstOrDefault(p => p.identificador == _publicacionId);
-            if (pub == null)
+            TxtTitulo.Text = _publicacion.titulo;
+            TxtContenido.Text = _publicacion.contenido;
+
+            if (_publicacion.recurso != null)
             {
-                MessageBox.Show("No se encontró la publicación.");
-                Close();
-                return;
+                CargarRecursoMultimedia(_publicacion.recurso);
             }
-
-            TxtTitulo.Text = pub.titulo;
-            TxtContenido.Text = pub.contenido;
-
-            if (pub.recursoId > 0)
+            else if (_publicacion.recursoId > 0)
             {
-                var recurso = await _recursoService.ObtenerRecursoPorIdAsync(pub.recursoId);
+                var recurso = await _recursoService.ObtenerRecursoPorIdAsync(_publicacion.recursoId);
                 CargarRecursoMultimedia(recurso);
             }
 
             await CargarComentarios();
         }
+
 
         private void CargarRecursoMultimedia(RecursoDTO recurso)
         {
@@ -70,7 +97,7 @@ namespace ClienteAminoExo.Paginas
                 var imagen = new Image
                 {
                     Height = 150,
-                    Stretch = System.Windows.Media.Stretch.UniformToFill,
+                    Stretch = Stretch.Uniform,
                     Source = new BitmapImage(new Uri(recurso.url))
                 };
                 RecursoMultimedia.Content = imagen;
@@ -91,7 +118,8 @@ namespace ClienteAminoExo.Paginas
 
         private async Task CargarComentarios()
         {
-            var comentarios = await _comentarioService.ObtenerComentariosPorPublicacionAsync(_publicacionId);
+            var comentarios = await _comentarioService.ObtenerComentariosPorPublicacionAsync(_publicacion.identificador
+            );
             ListaComentarios.ItemsSource = comentarios;
         }
 
@@ -101,16 +129,17 @@ namespace ClienteAminoExo.Paginas
 
             var comentario = new ComentarioDTO
             {
-                contenido = TxtComentario.Text,
-                publicacionId = _publicacionId,
+                texto = TxtComentario.Text, 
+                publicacionId = _publicacion.identificador,
                 usuarioId = SesionActual.UsuarioId,
-                fecha = DateTime.Now
+                
             };
 
             var exito = await _comentarioService.CrearComentarioAsync(comentario);
             if (exito)
             {
                 TxtComentario.Clear();
+                MessageBox.Show("Comentario enviado exitosamente.");
                 await CargarComentarios();
             }
             else
@@ -121,40 +150,116 @@ namespace ClienteAminoExo.Paginas
 
         private async void Reaccionar(string tipo)
         {
-            MessageBox.Show($"Intentando reaccionar con: {tipo}");
+            var tipoActual = await _reaccionService.ObtenerTipoReaccionAsync(SesionActual.UsuarioId, _publicacion.identificador);
 
-            var existente = await _reaccionService.ObtenerReaccionDelUsuarioAsync(_publicacionId, SesionActual.UsuarioId);
-            MessageBox.Show($"Reacción existente: {(existente != null ? existente.tipo : "ninguna")}");
-
-            if (existente == null)
+            if (tipoActual == null)
             {
-                MessageBox.Show("Creando nueva reacción");
-
                 var nueva = new ReaccionDTO
                 {
                     tipo = tipo,
-                    publicacionId = _publicacionId,
+                    publicacionId = _publicacion.identificador,
                     usuarioId = SesionActual.UsuarioId,
-                    fecha = DateTime.Now
+                    nombreUsuario = SesionActual.nombreUsuario,
                 };
 
                 var ok = await _reaccionService.CrearReaccionAsync(nueva);
-                if (!ok) MessageBox.Show("❌ Error al crear reacción.");
+                MessageBox.Show(ok ? "¡Reacción creada exitosamente!" : "❌ Error al crear reacción.");
             }
-            else if (existente.tipo != tipo)
-            {
-                MessageBox.Show($"Actualizando reacción de {existente.tipo} a {tipo}");
-
-                existente.tipo = tipo;
-                var ok = await _reaccionService.ActualizarReaccionAsync(existente);
-                if (!ok) MessageBox.Show("❌ Error al actualizar reacción.");
-            }
-            else
+            else if (tipoActual == tipo)
             {
                 MessageBox.Show("Ya has reaccionado con ese tipo.");
             }
+            else
+            {
+                var reaccionId = await _reaccionService.ObtenerReaccionIdAsync(SesionActual.UsuarioId, _publicacion.identificador);
+
+                if (reaccionId == null)
+                {
+                    MessageBox.Show("No se pudo obtener el ID de la reacción para actualizar.");
+                    return;
+                }
+
+                var reaccionActualizada = new ReaccionDTO
+                {
+                    reaccionId = reaccionId.Value,
+                    tipo = tipo
+                };
+
+                var ok = await _reaccionService.ActualizarReaccionAsync(reaccionActualizada);
+                MessageBox.Show(ok ? "Reacción actualizada correctamente." : "❌ Error al actualizar la reacción.");
+            }
         }
 
+
+
+        private async void BtnDescargarRecurso_Click(object sender, RoutedEventArgs e)
+        {
+            var tipo = _publicacion.recurso?.tipo;
+            var identificador = _publicacion.recurso?.identificador ?? _publicacion.recursoId;
+
+            MessageBox.Show($"Intentando descargar:\nTipo: {tipo}\nIdentificador: {identificador}");
+
+            if (string.IsNullOrWhiteSpace(tipo) || identificador <= 0)
+            {
+                MessageBox.Show("No hay recurso válido para descargar.");
+                return;
+            }
+
+            (bool exito, byte[] archivo, string mensaje) = await _recursoGrpcService.DescargarRecursoAsync(tipo, identificador);
+
+
+            if (!exito)
+            {
+                MessageBox.Show($"{mensaje}");
+                return;
+            }
+
+            var extension = tipo == "Foto" ? "jpg" :
+                tipo == "Audio" ? "mp3" :
+                tipo == "Video" ? "mp4" : "bin";
+
+            var dialogo = new Microsoft.Win32.SaveFileDialog
+            {
+                FileName = $"recurso_{identificador}.{extension}",
+                Filter = $"{tipo} (*.{extension})|*.{extension}|Todos los archivos (*.*)|*.*"
+            };
+
+            if (dialogo.ShowDialog() == true)
+            {
+                try
+                {
+                    System.IO.File.WriteAllBytes(dialogo.FileName, archivo);
+                    MessageBox.Show("Recurso descargado exitosamente.");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al guardar el archivo: {ex.Message}");
+                }
+            }
+        }
+
+        private async void BtnEliminarPublicacion_Click(object sender, RoutedEventArgs e)
+        {
+            var confirmacion = MessageBox.Show("¿Estás seguro de que deseas eliminar esta publicación?",
+                "Confirmar eliminación",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (confirmacion == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    await _publicacionService.EliminarPublicacionAsync(_publicacion.identificador);
+
+                    MessageBox.Show("Publicación eliminada exitosamente.");
+                    this.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al eliminar la publicación: {ex.Message}");
+                }
+            }
+        }
 
 
         private void BtnLike_Click(object sender, RoutedEventArgs e) => Reaccionar("like");
