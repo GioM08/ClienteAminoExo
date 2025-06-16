@@ -9,11 +9,6 @@ namespace ClienteAminoExo
     /// </summary>
     public partial class App : Application
     {
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            Env.Load();
-            base.OnStartup(e);
-        }
     }
 
 }

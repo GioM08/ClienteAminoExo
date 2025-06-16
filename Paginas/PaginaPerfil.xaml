@@ -1,0 +1,148 @@
+﻿<Page x:Class="ClienteAminoExo.Paginas.PaginaPerfil"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:ClienteAminoExo.Paginas"
+      mc:Ignorable="d" 
+      d:DesignHeight="550" d:DesignWidth="800"
+      Title="PaginaPerfil"
+      Background="{StaticResource FondoDegradado}">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- fila para el botón logout -->
+            <RowDefinition Height="*"/>
+            <!-- contenido -->
+        </Grid.RowDefinitions>
+
+        <!-- Botón Logout en la esquina superior derecha -->
+        <Button ToolTip="Cerrar sesión"
+                Click="BtnLogout_Click"
+                Width="45" Height="45"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Style="{StaticResource RoundedButtonStyle}"
+                Background="{StaticResource ColorMorado}"
+                FontSize="18"
+                Content="🔓"
+                Margin="0,10,10,0"
+                Grid.Row="0"/>
+
+        <!-- Contenido del perfil -->
+        <Border Grid.Row="1"
+                Background="{StaticResource GlassGradient}" 
+                CornerRadius="20" 
+                Padding="20"
+                BorderBrush="{StaticResource GlassBorderColor}"
+                BorderThickness="1.5"
+                Effect="{StaticResource VidrioSombra}">
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="150"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="50"/>
+                </Grid.RowDefinitions>
+
+                <!-- Encabezado -->
+                <Border Background="#661a1a2e" CornerRadius="10" Padding="20" Grid.Row="0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                      
+                        <TextBlock Name="TbUsuario" Text="usuario_" FontSize="20" FontWeight="Bold"
+                                   Foreground="White" Margin="20,40,0,0" Grid.Column="1"/>
+                        <TextBlock Name="TbRol" Text="Rol" FontSize="20" FontWeight="Bold"
+            Foreground="White" Margin="20,65,0,10" Grid.Column="1"/> 
+
+                        <!-- Botón eliminar cuenta -->
+                        <Button Content="Eliminar cuenta"
+                                Style="{StaticResource RoundedButtonStyle}"
+                                Width="160"
+                                Height="38"
+                                Background="#B23A48"
+                                Foreground="White"
+                                FontSize="12"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Margin="0,0,10,0"
+                                Click="BtnEliminarCuenta_Click"
+                                Grid.Column="1"/>
+                    </Grid>
+                </Border>
+
+                <!-- Formulario -->
+                <StackPanel Grid.Row="1" Margin="40,20,40,8">
+                    <Grid Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Nombre -->
+                        <StackPanel Margin="10" Grid.Column="0">
+                            <TextBlock Text="Nombre" Foreground="White" Margin="0,0,0,5"/>
+                            <TextBox x:Name="txtNombre" FontSize="14" Padding="8"
+                                     Background="#22FFFFFF" BorderBrush="#55FFFFFF" BorderThickness="1"
+                                     Foreground="White"/>
+                        </StackPanel>
+
+                        <!-- Nombre de usuario -->
+                        <StackPanel Margin="10" Grid.Column="1">
+                            <TextBlock Text="Nombre de Usuario" Foreground="White" Margin="0,0,0,5"/>
+                            <TextBox x:Name="txtNombreUsuario" FontSize="14" Padding="8"
+                                     Background="#22FFFFFF" BorderBrush="#55FFFFFF" BorderThickness="1"
+                                     Foreground="White"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Apellidos -->
+                        <StackPanel Margin="10" Grid.Column="0">
+                            <TextBlock Text="Apellidos" Foreground="White" Margin="0,0,0,5"/>
+                            <TextBox x:Name="txtApellidos" FontSize="14" Padding="8"
+                                     Background="#22FFFFFF" BorderBrush="#55FFFFFF" BorderThickness="1"
+                                     Foreground="White"/>
+                        </StackPanel>
+
+                        <!-- Correo -->
+                        <StackPanel Margin="10" Grid.Column="1">
+                            <TextBlock Text="Correo" Foreground="White" Margin="0,0,0,5"/>
+                            <TextBox x:Name="txtCorreo" FontSize="14" Padding="8"
+                                     Background="#22FFFFFF" BorderBrush="#55FFFFFF" BorderThickness="1"
+                                     Foreground="White"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+
+                <!-- Botones inferiores -->
+                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10,0,0">
+                    <Button x:Name="BtnGuardar"
+                            Content="Guardar cambios"
+                            Style="{StaticResource RoundedButtonStyle}"
+                            Width="200"
+                            Height="40"
+                            Margin="0,0,10,0"
+                            Click="BtnGuardar_Click"/>
+
+                    <Button x:Name="BtnCambiarContrasena"
+                            Content="Cambiar contraseña"
+                            Style="{StaticResource RoundedButtonStyle}"
+                            Width="200"
+                            Height="40"
+                            Click="BtnAbrirCambiarContrasena_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+    </Page>
