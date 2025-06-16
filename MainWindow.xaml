@@ -58,6 +58,14 @@
                         <TextBlock Text="Notificaciones" FontSize="20" Foreground="White" VerticalAlignment="Center" Margin="15,0,0,0"/>
                     </StackPanel>
                 </Button>
+                <Button Style="{StaticResource SidebarButtonStyle}" Tag="Busqueda" Click="MenuButton_Click" Height="60">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image Source="/Recursos/lupa.png" Width="30" Height="30" Stretch="Uniform" VerticalAlignment="Center"/>
+                        <TextBlock Text="Buscar" FontSize="20" Foreground="White" VerticalAlignment="Center" Margin="15,0,0,0"/>
+                    </StackPanel>
+                </Button>
+
+
             </StackPanel>
         </Border>
 

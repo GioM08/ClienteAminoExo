@@ -19,7 +19,7 @@ namespace ClienteAminoExo
         public MainWindow()
         {
             InitializeComponent();
-            //MainFrame.Navigate(new Paginas.PaginaInicio()); Si se quiere mandar de una al inicio cuando se entra
+            
         }
 
         private void MenuButton_Click(object sender, RoutedEventArgs e)
@@ -40,6 +40,10 @@ namespace ClienteAminoExo
                     case "Notificaciones":
                         MainFrame.Navigate(new Paginas.PaginaNotificaciones());
                         break;
+                    case "Busqueda":
+                        MainFrame.Navigate(new Paginas.PaginaBusqueda());
+                        break;
+
                 }
             }
         }

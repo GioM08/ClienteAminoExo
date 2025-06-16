@@ -13,15 +13,15 @@ namespace ClienteAminoExo.Servicios.REST
     public class RecursoDTO
     {
         public int identificador { get; set; }
-        public string tipo { get; set; }          // "Foto", "Audio", "Video"
-        public string formato { get; set; }       // "jpg", "mp3", "mp4"
+        public string tipo { get; set; }          
+        public string formato { get; set; }       
 
         [JsonProperty("URL")]
         public string url { get; set; }
 
         public int usuarioId { get; set; }
-        public string resolucion { get; set; }    // Solo para Foto/Video
-        public string duracion { get; set; }      // Solo para Audio
+        public string resolucion { get; set; }    
+        public string duracion { get; set; }      
     }
 
     public class RecursoRestService
@@ -39,21 +39,23 @@ namespace ClienteAminoExo.Servicios.REST
 
         public async Task<RecursoDTO> ObtenerRecursoPorIdAsync(int recursoId)
         {
-            var response = await _http.GetAsync($"/api/recursos/{recursoId}");
+            var response = await _http.GetAsync($"{BackendConfig.BackendBaseUrl}/api/recursos/{recursoId}");
+
             if (!response.IsSuccessStatusCode)
                 return null;
 
             var json = await response.Content.ReadAsStringAsync();
-            var recurso = JsonConvert.DeserializeObject<RecursoDTO>(json);
-
-            // Asegurar URL absoluta si es relativa
-            if (!string.IsNullOrEmpty(recurso?.url) && !Uri.IsWellFormedUriString(recurso.url, UriKind.Absolute))
-            {
-                recurso.url = $"{BackendConfig.BackendBaseUrl}/{recurso.url.TrimStart('/')}";
-            }
-
-            return recurso;
+            return JsonConvert.DeserializeObject<RecursoDTO>(json);
         }
 
+
+        public void ActualizarHeaders()
+        {
+            if (!string.IsNullOrEmpty(SesionActual.Rol))
+            {
+                _http.DefaultRequestHeaders.Remove("User-Role"); 
+                _http.DefaultRequestHeaders.Add("User-Role", SesionActual.Rol);
+            }
+        }
     }
 }

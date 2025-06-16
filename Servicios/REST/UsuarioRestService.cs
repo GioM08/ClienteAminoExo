@@ -99,6 +99,29 @@ namespace ClienteAminoExo.Servicios.REST
             return await _httpClient.DeleteAsync($"api/usuarios/{id}");
         }
 
+        public void ActualizarHeaders()
+        {
+            if (!string.IsNullOrEmpty(SesionActual.Rol))
+            {
+                _httpClient.DefaultRequestHeaders.Remove("User-Role"); 
+                _httpClient.DefaultRequestHeaders.Add("User-Role", SesionActual.Rol);
+            }
+        }
+
+        public async Task<List<Usuario>> ObtenerUsuariosAsync()
+        {
+            var response = await _httpClient.GetAsync("api/usuarios"); 
+            if (!response.IsSuccessStatusCode)
+            {
+                return new List<Usuario>();
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            var usuarios = JsonConvert.DeserializeObject<List<Usuario>>(json);
+            return usuarios ?? new List<Usuario>();
+        }
+
 
     }
 

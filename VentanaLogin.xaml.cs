@@ -52,7 +52,16 @@ namespace ClienteAminoExo
 
                     var perfilService = new UsuarioRestService(resultado.Token);
                     var perfil = await perfilService.ObtenerPerfilAsync();
+
+                    MessageBox.Show($"🧪 ID: {perfil.usuario.usuarioId}\n🧪 Rol: {perfil.usuario.rol} \n NombreUsuario: {perfil.usuario.nombreUsuario}", "Datos del perfil");
+
+
+
                     SesionActual.UsuarioId = perfil.usuario.usuarioId;
+                    SesionActual.Rol = perfil.usuario.rol;
+                    SesionActual.nombreUsuario = perfil.usuario.nombreUsuario;
+
+                    perfilService.ActualizarHeaders();
 
 
                     var main = new MainWindow();

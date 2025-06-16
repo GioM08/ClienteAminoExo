@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -31,9 +32,12 @@ namespace ClienteAminoExo.Paginas
         private readonly PublicacionRestService _publicacionRest = new(SesionActual.Token);
         private string rutaArchivoSeleccionado;
         int usuarioId = SesionActual.UsuarioId;
-        private int recursoIdSubido = 0; // se actualiza solo si se sube recurso
+        private int recursoIdSubido = 0; 
         private UsuarioRestService.Usuario _usuarioActual;
-
+        private string _rutaArchivoSeleccionado;
+        private string _tipoRecurso;
+        private int _formatoRecurso;
+        private int _tamanoRecurso;
 
         public PaginaPublicar()
         {
@@ -68,70 +72,102 @@ namespace ClienteAminoExo.Paginas
         private async void BtnSeleccionarArchivo_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog dlg = new OpenFileDialog();
-            if (dlg.ShowDialog() != true)
+            if (dlg.ShowDialog() != true) return;
+
+            _rutaArchivoSeleccionado = dlg.FileName;
+            _tipoRecurso = (CmbTipoRecurso.SelectedItem as ComboBoxItem)?.Content.ToString();
+            if (string.IsNullOrEmpty(_tipoRecurso) || !new[] { "Foto", "Video", "Audio" }.Contains(_tipoRecurso))
             {
-                TxtEstado.Text = "Selección cancelada.";
+                MessageBox.Show("Selecciona un tipo válido: Foto, Video o Audio.");
                 return;
             }
+            _formatoRecurso = _formatoRecurso = ObtenerCodigoFormato(System.IO.Path.GetExtension(_rutaArchivoSeleccionado).Trim('.'));
+            _tamanoRecurso = (int)new FileInfo(_rutaArchivoSeleccionado).Length;
 
-            rutaArchivoSeleccionado = dlg.FileName;
-            TxtArchivoSeleccionado.Text = $"Archivo: {System.IO.Path.GetFileName(rutaArchivoSeleccionado)}";
-
-            string tipo = (CmbTipoRecurso.SelectedItem as ComboBoxItem)?.Content.ToString();
-            if (string.IsNullOrWhiteSpace(tipo))
-            {
-                TxtEstado.Text = "Selecciona el tipo de recurso antes de subir.";
-                return;
-            }
-
-            string formato = System.IO.Path.GetExtension(rutaArchivoSeleccionado).Trim('.');
-            long tamano = new FileInfo(rutaArchivoSeleccionado).Length;
-
-            TxtEstado.Text = "Subiendo recurso al servidor...";
-
-            var resultado = await _recursoGrpc.CrearRecursoAsync(
-                rutaArchivoSeleccionado, tipo, formato, tamano, usuarioId
-            );
-
-            if (!resultado.exito)
-            {
-                TxtEstado.Text = $"Error al subir recurso: {resultado.mensaje}";
-                recursoIdSubido = 0;
-            }
-            else
-            {
-                recursoIdSubido = resultado.identificador;
-                TxtEstado.Text = $"Recurso subido correctamente (ID: {recursoIdSubido})";
-            }
+            TxtArchivoSeleccionado.Text = $"Archivo: {System.IO.Path.GetFileName(_rutaArchivoSeleccionado)}";
         }
 
 
         private async void BtnPublicar_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(TxtTitulo.Text) || string.IsNullOrWhiteSpace(TxtContenido.Text))
+            if (string.IsNullOrEmpty(_rutaArchivoSeleccionado))
             {
-                TxtEstado.Text = "Debes completar título y contenido.";
+                MessageBox.Show("Debes seleccionar un archivo primero.");
                 return;
             }
 
-            if (recursoIdSubido == 0)
-            {
-                TxtEstado.Text = "Primero debes seleccionar y subir un recurso.";
-                return;
-            }
+            var publicacionService = new PublicacionRestService(SesionActual.Token);
+            publicacionService.ActualizarHeaders();
 
-            TxtEstado.Text = "Creando publicación...";
-
-            var publicacion = new PublicacionDTO
+            var nuevaPublicacion = new PublicacionDTO
             {
-                titulo = TxtTitulo.Text,
+                titulo = TxtTitulo.Text, 
                 contenido = TxtContenido.Text,
-                usuarioId = usuarioId,
-                recursoId = recursoIdSubido
+                usuarioId = SesionActual.UsuarioId,
+                fechaCreacion = DateTime.Now
             };
 
-            bool exito = await _publicacionRest.CrearPublicacionAsync(publicacion);
-            TxtEstado.Text = exito ? "¡Publicación creada exitosamente!" : "Error al crear publicación.";
+            var publicacionCreada = await publicacionService.CrearPublicacionConRespuestaAsync(nuevaPublicacion);
+
+            if (publicacionCreada == null || publicacionCreada.identificador <= 0)
+            {
+                MessageBox.Show("No se pudo crear la publicación");
+                return;
+            }
+
+            int publicacionId = publicacionCreada.identificador;
+
+            var recursoService = new RecursoGrpcService();
+
+            var respuestaRecurso = await recursoService.CrearRecursoAsync(
+                rutaArchivo: _rutaArchivoSeleccionado,
+                tipo: _tipoRecurso,
+                formato: _formatoRecurso,
+                tamano: _tamanoRecurso,
+                usuarioId: SesionActual.UsuarioId,
+                publicacionId: publicacionId,
+                jwt: SesionActual.Token,
+                resolucion: 1080
+            );
+
+            MessageBox.Show("Respuesta al subir recurso: " + respuestaRecurso.Mensaje);
+
+            if (!respuestaRecurso.Exito)
+            {
+                MessageBox.Show("Error al subir recurso: " + respuestaRecurso.Mensaje);
+
+                if (!respuestaRecurso.Exito)
+                {
+                    MessageBox.Show("Error al subir recurso: " + respuestaRecurso.Mensaje);
+
+                    try
+                    {
+                        await publicacionService.EliminarPublicacionAsync(publicacionId);
+                        MessageBox.Show("Publicación eliminada correctamente.");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error al eliminar publicación: {ex.Message}");
+                    }
+                }
+
+                MessageBox.Show("Publicación y recurso creados correctamente.");
+            }
+
+            MessageBox.Show("Publicación y recurso creados correctamente.");
+        }
+
+
+        private int ObtenerCodigoFormato(string extension)
+        {
+            switch (extension.ToLower())
+            {
+                case "jpg": case "jpeg": return 1;
+                case "png": return 2;
+                case "mp3": return 3;
+                case "mp4": return 4;
+                default: return 0; 
+            }
         }
 
     }

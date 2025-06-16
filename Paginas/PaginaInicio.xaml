@@ -3,30 +3,32 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:ClienteAminoExo.Paginas"
-      mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="PaginaInicio"
+      mc:Ignorable="d"
+      d:DesignHeight="720" d:DesignWidth="1000"
       Background="{StaticResource FondoDegradado}">
-    <ScrollViewer>
-        <WrapPanel  x:Name="WrapPanelPublicaciones" Margin="20">
-            <!-- Tarjeta 1 -->
-            <Border Background="{StaticResource ColorBarraLateral}" CornerRadius="10" Padding="10" Margin="10" Width="250">
-                <StackPanel>
-                    <Image Source="/Recursos/user01.jpg" Height="150" Stretch="UniformToFill" Margin="0,0,0,10"/>
-                    <TextBlock Text="Night Sky" FontSize="18" FontWeight="Bold" Foreground="White"/>
-                    <TextBlock Text="User 01" FontSize="14" Foreground="LightGray"/>
-                    <TextBlock Text="Lorem ipsum dolor sit amet." FontSize="12" Foreground="LightGray" TextWrapping="Wrap" Margin="0,5,0,5"/>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,5,0,0">
-                        <Image Source="/Recursos/like.png" Width="16" Margin="0,0,5,0"/>
-                        <TextBlock Text="150" Foreground="White" Margin="0,0,10,0"/>
-                        <Image Source="/Recursos/heart.png" Width="16" Margin="0,0,5,0"/>
-                        <TextBlock Text="32" Foreground="White"/>
-                    </StackPanel>
-                </StackPanel>
-            </Border>
 
-            <!-- Repite más tarjetas similares -->
-        </WrapPanel>
-    </ScrollViewer>
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+            <ComboBox x:Name="ComboBoxFiltro" Width="150" Margin="0,0,10,0" SelectionChanged="ComboBoxFiltro_SelectionChanged">
+                <ComboBoxItem Content="Todos" Tag="Todos" IsSelected="True"/>
+                <ComboBoxItem Content="Fotos" Tag="Foto"/>
+                <ComboBoxItem Content="Videos" Tag="Video"/>
+                <ComboBoxItem Content="Audios" Tag="Audio"/>
+            </ComboBox>
+            <ComboBox x:Name="ComboBoxUsuarios" Width="150" Visibility="Collapsed" Margin="0,0,10,0"/>
+        </StackPanel>
+
+        <!-- Título -->
+        <TextBlock Grid.Row="1" Text="Publicaciones recientes" FontSize="20" FontWeight="Bold" Foreground="White" Margin="0,0,0,10"/>
+
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <WrapPanel x:Name="WrapPanelPublicaciones" Margin="0"/>
+        </ScrollViewer>
+    </Grid>
 </Page>
