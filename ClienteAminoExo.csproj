@@ -23,6 +23,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="LiveCharts.Wpf.NetCore3" Version="0.9.8" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Text.Json" Version="9.0.5" />
   </ItemGroup>
@@ -38,6 +39,7 @@
 
   <ItemGroup>
     <Resource Include="Recursos\bell.png" />
+    <Resource Include="Recursos\stats.png" />
     <Resource Include="Recursos\home.png" />
     <Resource Include="Recursos\like.png" />
     <Resource Include="Recursos\upload.png" />

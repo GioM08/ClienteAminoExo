@@ -3,113 +3,154 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ClienteAminoExo"
         mc:Ignorable="d"
         Title="VentanaRegistroUsuario" Height="780" Width="500"
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
         Background="{StaticResource FondoDegradado}">
 
+    <Window.Resources>
+        <Style x:Key="ComboBoxOscuro" TargetType="ComboBox">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#22000000"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <Border x:Name="Bd" Background="{TemplateBinding Background}" BorderBrush="#44FFFFFF" BorderThickness="1" CornerRadius="6" Padding="5">
+                                <ContentPresenter x:Name="ContentSite" Content="{TemplateBinding SelectionBoxItem}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,2,30,2"/>
+                            </Border>
+                            <ToggleButton Grid.Column="2" IsChecked="{Binding Path=IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}" Focusable="False" ClickMode="Press" Background="Transparent" BorderBrush="{x:Null}" HorizontalAlignment="Right" Margin="0">
+                                <Path VerticalAlignment="Center" HorizontalAlignment="Center" Fill="White" Data="M 0 0 L 4 4 L 8 0 Z" Margin="0,0,10,0"/>
+                            </ToggleButton>
+                            <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Fade">
+                                <Border Background="#33000000" BorderBrush="#44FFFFFF" BorderThickness="1" CornerRadius="5" SnapsToDevicePixels="True">
+                                    <ScrollViewer Margin="4" SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ComboBoxItem">
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="Background" Value="#33000000"/>
+                        <Setter Property="Padding" Value="5"/>
+                        <Setter Property="FontSize" Value="14"/>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <Grid Margin="20">
-        <Border Background="{StaticResource GlassGradient}" 
-                CornerRadius="20" 
-                Padding="25"
-                BorderBrush="{StaticResource GlassBorderColor}" 
-                BorderThickness="1.5"
-                Effect="{StaticResource VidrioSombra}">
+        <Border Background="{StaticResource GlassGradient}" CornerRadius="20" Padding="25" BorderBrush="{StaticResource GlassBorderColor}" BorderThickness="1.5" Effect="{StaticResource VidrioSombra}">
+            <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled" PanningMode="VerticalOnly">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="300" Margin="15">
 
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="300" Margin="15">
+                    <TextBlock Text="EXO" FontSize="28" FontWeight="Bold" Foreground="{StaticResource ColorMorado}" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                    <TextBlock Text="Crear una cuenta" FontSize="24" FontWeight="Bold" Foreground="White" Margin="0,0,0,20" HorizontalAlignment="Center"/>
 
-                <TextBlock Text="EXO" FontSize="28" FontWeight="Bold" 
-                           Foreground="{StaticResource ColorMorado}" 
-                           HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                    <!-- Usuario -->
+                    <StackPanel Margin="0,0,0,10">
+                        <TextBlock Text="Nombre de usuario" Foreground="White" FontSize="12" Margin="5,0,0,3"/>
+                        <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/Recursos/user.png" Width="20" Margin="0,0,10,0"/>
+                                <TextBox x:Name="TxtUsuario" BorderThickness="0" Background="Transparent" Foreground="White" FontSize="14" Width="248"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
 
-                <TextBlock Text="Crear una cuenta" FontSize="24" FontWeight="Bold" 
-                           Foreground="White" Margin="0,0,0,20" HorizontalAlignment="Center"/>
+                    <!-- Correo -->
+                    <StackPanel Margin="0,0,0,10">
+                        <TextBlock Text="Correo electrónico" Foreground="White" FontSize="12" Margin="5,0,0,3"/>
+                        <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/Recursos/email.png" Width="20" Margin="0,0,10,0"/>
+                                <TextBox x:Name="TxtCorreo" BorderThickness="0" Background="Transparent" Foreground="White" FontSize="14" Width="248"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
 
-                <!-- Campo: Usuario -->
-                <StackPanel Margin="0,0,0,10">
-                    <TextBlock Text="Nombre de usuario" Foreground="White" FontSize="12" Margin="5,0,0,3"/>
-                    <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
-                        <StackPanel Orientation="Horizontal">
-                            <Image Source="/Recursos/user.png" Width="20" Margin="0,0,10,0"/>
-                            <TextBox x:Name="TxtUsuario" BorderThickness="0" Background="Transparent" 
-                                     Foreground="White" FontSize="14" Width="248" />
-                        </StackPanel>
-                    </Border>
+                    <!-- Contraseña -->
+                    <StackPanel Margin="0,0,0,10">
+                        <TextBlock Text="Contraseña" Foreground="White" FontSize="12" Margin="5,0,0,3"/>
+                        <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/Recursos/lock.png" Width="20" Margin="0,0,10,0"/>
+                                <PasswordBox x:Name="TxtContrasena" BorderThickness="0" Background="Transparent" Foreground="White" FontSize="14" Width="248"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Confirmar contraseña -->
+                    <StackPanel Margin="0,0,0,10">
+                        <TextBlock Text="Confirmar contraseña" Foreground="White" FontSize="12" Margin="5,0,0,3"/>
+                        <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/Recursos/lock.png" Width="20" Margin="0,0,10,0"/>
+                                <PasswordBox x:Name="TxtConfirmar" BorderThickness="0" Background="Transparent" Foreground="White" FontSize="14" Width="248"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Nombre -->
+                    <StackPanel Margin="0,0,0,10">
+                        <TextBlock Text="Nombre" Foreground="White" FontSize="12" Margin="5,0,0,3"/>
+                        <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
+                            <TextBox x:Name="TxtNombre" BorderThickness="0" Background="Transparent" Foreground="White" FontSize="14" Width="270"/>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Apellidos -->
+                    <StackPanel Margin="0,0,0,10">
+                        <TextBlock Text="Apellidos" Foreground="White" FontSize="12" Margin="5,0,0,3"/>
+                        <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
+                            <TextBox x:Name="TxtApellidos" BorderThickness="0" Background="Transparent" Foreground="White" FontSize="14" Width="270"/>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Rol -->
+                    <StackPanel Margin="0,0,0,10">
+                        <TextBlock Text="Rol" Foreground="White" FontSize="12" Margin="5,0,0,3"/>
+                        <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
+                            <ComboBox x:Name="ComboRol" Style="{StaticResource ComboBoxOscuro}" Width="270" SelectedIndex="0" SelectionChanged="ComboRol_SelectionChanged">
+                                <ComboBoxItem Content="Fan"/>
+                                <ComboBoxItem Content="Moderador"/>
+                                <ComboBoxItem Content="Administrador"/>
+                            </ComboBox>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Contraseña de rol -->
+                    <StackPanel x:Name="PanelContrasenaRol" Margin="0,0,0,10" Visibility="Collapsed">
+                        <TextBlock Text="Contraseña de moderador/administrador" Foreground="White" FontSize="12" Margin="5,0,0,3"/>
+                        <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
+                            <PasswordBox x:Name="TxtContrasenaRol" BorderThickness="0" Background="Transparent" Foreground="White" FontSize="14" Width="270"/>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Botón -->
+                    <Button Content="Registrarse" Style="{StaticResource RoundedButtonStyle}" Margin="0,20,0,0" Click="BtnRegistrar_Click"/>
+
+                    <!-- Enlace login -->
+                    <TextBlock FontSize="12" Foreground="#CCCCCC" TextAlignment="Center" MouseDown="IrVentanaLogin_MouseDown" Cursor="Hand" Margin="0,10,0,0">
+                        ¿Ya tienes cuenta? <Run Text="Inicia sesión" Foreground="GhostWhite"/>
+                    </TextBlock>
+
                 </StackPanel>
-
-                <!-- Campo: Correo -->
-                <StackPanel Margin="0,0,0,10">
-                    <TextBlock Text="Correo electrónico" Foreground="White" FontSize="12" Margin="5,0,0,3"/>
-                    <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
-                        <StackPanel Orientation="Horizontal">
-                            <Image Source="/Recursos/email.png" Width="20" Margin="0,0,10,0"/>
-                            <TextBox x:Name="TxtCorreo" BorderThickness="0" Background="Transparent" 
-                                     Foreground="White" FontSize="14" Width="248"/>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-
-                <!-- Campo: Contraseña -->
-                <StackPanel Margin="0,0,0,10">
-                    <TextBlock Text="Contraseña" Foreground="White" FontSize="12" Margin="5,0,0,3"/>
-                    <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
-                        <StackPanel Orientation="Horizontal">
-                            <Image Source="/Recursos/lock.png" Width="20" Margin="0,0,10,0"/>
-                            <PasswordBox x:Name="TxtContrasena" BorderThickness="0" Background="Transparent" 
-                                         Foreground="White" FontSize="14" Width="248"/>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-
-                <!-- Campo: Confirmar contraseña -->
-                <StackPanel Margin="0,0,0,10">
-                    <TextBlock Text="Confirmar contraseña" Foreground="White" FontSize="12" Margin="5,0,0,3"/>
-                    <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
-                        <StackPanel Orientation="Horizontal">
-                            <Image Source="/Recursos/lock.png" Width="20" Margin="0,0,10,0"/>
-                            <PasswordBox x:Name="TxtConfirmar" BorderThickness="0" Background="Transparent" 
-                                         Foreground="White" FontSize="14" Width="248"/>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-
-                <!-- Campo: Nombre real -->
-<StackPanel Margin="0,0,0,10">
-    <TextBlock Text="Nombre" Foreground="White" FontSize="12" Margin="5,0,0,3"/>
-    <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
-        <StackPanel Orientation="Horizontal">
-            <TextBox x:Name="TxtNombre" BorderThickness="0" Background="Transparent" 
-                     Foreground="White" FontSize="14" Width="270"/>
-        </StackPanel>
-    </Border>
-</StackPanel>
-
-<!-- Campo: Apellidos -->
-<StackPanel Margin="0,0,0,10">
-    <TextBlock Text="Apellidos" Foreground="White" FontSize="12" Margin="5,0,0,3"/>
-    <Border Background="#22000000" CornerRadius="10" BorderThickness="1" BorderBrush="#44FFFFFF" Padding="10">
-        <StackPanel Orientation="Horizontal">
-            <TextBox x:Name="TxtApellidos" BorderThickness="0" Background="Transparent" 
-                     Foreground="White" FontSize="14" Width="270"/>
-        </StackPanel>
-    </Border>
-</StackPanel>
-
-
-
-                <!-- Botón: Registrarse -->
-                <Button Content="Registrarse"
-                        Style="{StaticResource RoundedButtonStyle}"
-                        Margin="0,20,0,0"
-                        Click="BtnRegistrar_Click"/>
-
-                <!-- Enlace a login -->
-                <TextBlock FontSize="12" Foreground="#CCCCCC" TextAlignment="Center" MouseDown="IrVentanaLogin_MouseDown" Cursor="Hand" Margin="0,10,0,0">
-                    ¿Ya tienes cuenta? 
-                    <Run Text="Inicia sesión" Foreground="{StaticResource ColorMorado}"/>
-                </TextBlock>
-
-            </StackPanel>
+            </ScrollViewer>
         </Border>
     </Grid>
 </Window>

@@ -3,17 +3,10 @@ syntax = "proto3";
 package estadistica;
 
 /**
- * Servicio para obtener estadísticas relacionadas con las publicaciones.
- * Permite consultar métricas agregadas como las publicaciones con más likes y comentarios.
+ * Servicio para obtener estadísticas relacionadas con las publicaciones,
+ * interacciones, usuarios y notificaciones.
  */
 service EstadisticasService {
-  /**
-   * Devuelve estadísticas generales del sistema, incluyendo
-   * las publicaciones con más likes y comentarios.
-   *
-   * @param EstadisticasRequest (vacío)
-   * @returns EstadisticasResponse con los datos resumidos.
-   */
   rpc ObtenerEstadisticas (EstadisticasRequest) returns (EstadisticasResponse);
 }
 
@@ -23,17 +16,42 @@ service EstadisticasService {
 message EstadisticasRequest {}
 
 /**
- * Respuesta con estadísticas agregadas del sistema.
+ * Estructura básica para publicaciones destacadas.
+ */
+message TopPublicacion {
+  int32 publicacionId = 1;
+  int32 total = 2;
+}
+
+/**
+ * Conteo por tipo (por ejemplo: fotos, videos, audios).
+ */
+message ConteoPorTipo {
+  string tipo = 1;
+  int32 total = 2;
+}
+
+message UsuarioTop {
+  int32 usuarioId = 1;
+  string nombre = 2;
+}
+
+/**
+ * Respuesta completa con estadísticas agregadas del sistema.
  */
 message EstadisticasResponse {
-  /**
-   * Representa una publicación destacada por alguna métrica (likes, comentarios).
-   */
-  message TopPublicacion {
-    int32 publicacionId = 1; // ID de la publicación destacada
-    int32 total = 2;         // Total de interacciones (likes o comentarios)
-  }
+   TopPublicacion topLikes = 1;
+  TopPublicacion topComentarios = 2;
 
-  TopPublicacion topLikes = 1;        // Publicación con mayor número de likes
-  TopPublicacion topComentarios = 2;  // Publicación con mayor número de comentarios
+  int32 totalPublicaciones = 3;
+  string diaConMasPublicaciones = 4;
+  int32 publicacionesEnEseDia = 5;
+
+  UsuarioTop usuarioTopPublicaciones = 6;
+  UsuarioTop usuarioTopReacciones = 7;
+  UsuarioTop usuarioTopComentarios = 8;
+
+  repeated ConteoPorTipo recursosPorTipo = 9;
+
+  int32 notificacionesPendientes = 10;
 }

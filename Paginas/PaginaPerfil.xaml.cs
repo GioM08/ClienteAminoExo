@@ -44,11 +44,25 @@ namespace ClienteAminoExo.Paginas
                 txtApellidos.Text = _usuarioActual.apellidos;
                 txtCorreo.Text = _usuarioActual.correo;
                 TbUsuario.Text = _usuarioActual.nombreUsuario;
+                txtNombreUsuario.Text = _usuarioActual.nombreUsuario;
+                TbRol.Text = "Rol: " + _usuarioActual.rol;
+            }
+            catch (System.Net.Http.HttpRequestException ex) when (ex.Message.Contains("401"))
+            {
+                MessageBox.Show("Tu sesión ha expirado. Por favor, vuelve a iniciar sesión.", "Sesión caducada", MessageBoxButton.OK, MessageBoxImage.Warning);
+
+                SesionActual.CerrarSesion();
+
+                var login = new VentanaLogin();
+                login.Show();
+
+                Window.GetWindow(this)?.Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al obtener el perfil: " + ex.Message);
+                MessageBox.Show("Error al obtener el perfil: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
         }
 
         private async void BtnGuardar_Click(object sender, RoutedEventArgs e)
@@ -160,5 +174,6 @@ namespace ClienteAminoExo.Paginas
                 Window.GetWindow(this)?.Close();
             }
         }
+
     }
 }

@@ -58,6 +58,14 @@
                         <TextBlock Text="Notificaciones" FontSize="20" Foreground="White" VerticalAlignment="Center" Margin="15,0,0,0"/>
                     </StackPanel>
                 </Button>
+
+                <Button x:Name="BtnEstadisticas" Visibility="Collapsed"
+        Style="{StaticResource SidebarButtonStyle}" Tag="Estadisticas" Click="MenuButton_Click" Height="60">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image Source="/Recursos/stats.png" Width="30" Height="30" Stretch="Uniform" VerticalAlignment="Center"/>
+                        <TextBlock Text="Estadísticas" FontSize="20" Foreground="White" VerticalAlignment="Center" Margin="15,0,0,0"/>
+                    </StackPanel>
+                </Button>
             </StackPanel>
         </Border>
 

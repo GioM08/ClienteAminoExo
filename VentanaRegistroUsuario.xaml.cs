@@ -1,4 +1,5 @@
 ﻿using ClienteAminoExo.Servicios.REST;
+using ClienteAminoExo.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,18 +13,18 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Text.Json;
 
 namespace ClienteAminoExo
 {
-    /// <summary>
-    /// Lógica de interacción para VentanaRegistroUsuario.xaml
-    /// </summary>
     public partial class VentanaRegistroUsuario : Window
     {
         public VentanaRegistroUsuario()
         {
             InitializeComponent();
+            PanelContrasenaRol.Visibility = Visibility.Collapsed;
         }
+
         private async void BtnRegistrar_Click(object sender, RoutedEventArgs e)
         {
             string nombreUsuario = TxtUsuario.Text;
@@ -32,20 +33,36 @@ namespace ClienteAminoExo
             string correo = TxtCorreo.Text;
             string contrasena = TxtContrasena.Password;
             string confirmar = TxtConfirmar.Password;
-            string rol = "Fan";
+            string rol = (ComboRol.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "Fan";
+            string claveRol = TxtContrasenaRol.Password;
 
-            // Validación
-            if (string.IsNullOrWhiteSpace(nombreUsuario) || string.IsNullOrWhiteSpace(nombre) ||
-                string.IsNullOrWhiteSpace(apellidos) || string.IsNullOrWhiteSpace(correo) ||
-                string.IsNullOrWhiteSpace(contrasena) || string.IsNullOrWhiteSpace(confirmar))
+            string error = Validaciones.ValidarNombre(nombre, "Nombre") ??
+                           Validaciones.ValidarNombre(apellidos, "Apellidos") ??
+                           Validaciones.ValidarNombreDeUsuario(nombreUsuario) ??
+                           Validaciones.ValidarCorreo(correo) ??
+                           Validaciones.ValidarPassword(contrasena);
+
+            if (!string.IsNullOrEmpty(error))
             {
-                MessageBox.Show("Completa todos los campos", "Campos vacíos", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(error, "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             if (contrasena != confirmar)
             {
                 MessageBox.Show("Las contraseñas no coinciden", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if ((rol == "Moderador") && claveRol != "conmoder")
+            {
+                MessageBox.Show("La contraseña de rol es incorrecta", "Acceso restringido", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            if ((rol == "Administrador") && claveRol != "conadmin")
+            {
+                MessageBox.Show("La contraseña de rol es incorrecta", "Acceso restringido", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -63,8 +80,20 @@ namespace ClienteAminoExo
                 }
                 else
                 {
-                    string error = await respuesta.Content.ReadAsStringAsync();
-                    MessageBox.Show($"Error al crear cuenta: {error}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    string errorMensaje = await respuesta.Content.ReadAsStringAsync();
+                    string mensaje = "Error desconocido";
+
+                    try
+                    {
+                        using var doc = JsonDocument.Parse(errorMensaje);
+                        mensaje = doc.RootElement.GetProperty("msg").GetString();
+                    }
+                    catch
+                    {
+                        mensaje = errorMensaje;
+                    }
+
+                    MessageBox.Show($"Error al crear cuenta: {mensaje}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)
@@ -73,13 +102,28 @@ namespace ClienteAminoExo
             }
         }
 
-
-
         private void IrVentanaLogin_MouseDown(object sender, MouseButtonEventArgs e)
         {
             var ventanaLogin = new VentanaLogin();
             ventanaLogin.Show();
             this.Close();
+        }
+
+        private void ComboRol_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (PanelContrasenaRol == null)
+                return;
+
+            string rol = (ComboRol.SelectedItem as ComboBoxItem)?.Content.ToString();
+
+            if (rol == "Moderador" || rol == "Administrador")
+            {
+                PanelContrasenaRol.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                PanelContrasenaRol.Visibility = Visibility.Collapsed;
+            }
         }
     }
 }

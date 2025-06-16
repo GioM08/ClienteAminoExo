@@ -16,10 +16,20 @@ namespace ClienteAminoExo
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        private string rolUsuario;
+
+        public MainWindow(string rol) // ← recibe el rol del usuario al abrir la ventana
         {
             InitializeComponent();
-            //MainFrame.Navigate(new Paginas.PaginaInicio()); Si se quiere mandar de una al inicio cuando se entra
+            rolUsuario = rol;
+
+            if (rolUsuario == "Administrador")
+            {
+                BtnEstadisticas.Visibility = Visibility.Visible;
+            }
+
+            // Opcional: carga la página de inicio al abrir
+            // MainFrame.Navigate(new Paginas.PaginaInicio());
         }
 
         private void MenuButton_Click(object sender, RoutedEventArgs e)
@@ -40,8 +50,12 @@ namespace ClienteAminoExo
                     case "Notificaciones":
                         MainFrame.Navigate(new Paginas.PaginaNotificaciones());
                         break;
+                    case "Estadisticas":
+                        MainFrame.Navigate(new Paginas.PaginaEstadisticas());
+                        break;
                 }
             }
         }
     }
+
 }

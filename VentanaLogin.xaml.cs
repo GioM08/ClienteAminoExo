@@ -55,7 +55,7 @@ namespace ClienteAminoExo
                     SesionActual.UsuarioId = perfil.usuario.usuarioId;
 
 
-                    var main = new MainWindow();
+                    var main = new MainWindow(perfil.usuario.rol);
                     main.Show();
                     this.Close();
 

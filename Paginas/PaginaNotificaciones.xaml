@@ -9,8 +9,44 @@
       Title="PaginaNotificaciones"
       Background="{StaticResource FondoDegradado}">
 
-    <Grid>
-        <TextBlock Text="Bienvenido a las Notificaciones" Foreground="White" FontSize="28" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
+        <TextBlock Text="Notificaciones" FontSize="26" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+
+        <ListView x:Name="ListaNotificaciones"
+                  Grid.Row="1"
+                  Margin="0,10"
+                  SelectionMode="Extended"
+                  Background="Transparent"
+                  Foreground="White"
+                  BorderThickness="0">
+            
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Mensaje" Width="400" DisplayMemberBinding="{Binding mensaje}"/>
+                    <GridViewColumn Header="Fecha" Width="150" DisplayMemberBinding="{Binding fecha}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10">
+            <Button Content="Marcar como leída"
+                    Style="{StaticResource RoundedButtonStyle}"
+                    Click="BtnMarcarLeida_Click"
+                    Margin="5"/>
+            <Button Content="Marcar múltiples"
+                    Style="{StaticResource RoundedButtonStyle}"
+                    Click="BtnMarcarMultiples_Click"
+                    Margin="5"/>
+            <Button Content="Eliminar"
+                    Style="{StaticResource RoundedButtonStyle}"
+                    Click="BtnEliminar_Click"
+                    Margin="5"/>
+        </StackPanel>
     </Grid>
 </Page>
