@@ -14,15 +14,62 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-            <ComboBox x:Name="ComboBoxFiltro" Width="150" Margin="0,0,10,0" SelectionChanged="ComboBoxFiltro_SelectionChanged">
-                <ComboBoxItem Content="Todos" Tag="Todos" IsSelected="True"/>
-                <ComboBoxItem Content="Fotos" Tag="Foto"/>
-                <ComboBoxItem Content="Videos" Tag="Video"/>
-                <ComboBoxItem Content="Audios" Tag="Audio"/>
-            </ComboBox>
-            <ComboBox x:Name="ComboBoxUsuarios" Width="150" Visibility="Collapsed" Margin="0,0,10,0"/>
-        </StackPanel>
+        <Grid Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- IZQUIERDA: Buscador -->
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Column="0">
+
+                <!-- Campo de búsqueda con estilo -->
+                <Border Background="#22000000"
+                CornerRadius="10"
+                BorderThickness="1"
+                BorderBrush="#44FFFFFF"
+                Padding="10"
+                Margin="0,0,10,0">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Recursos/lupa.png" Width="20" Margin="0,0,10,0"/>
+                        <TextBox x:Name="TextBoxBusqueda"
+                         BorderThickness="0"
+                         Background="Transparent"
+                         Foreground="White"
+                         FontSize="14"
+                         Width="250"
+                         VerticalContentAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Botón Buscar con estilo -->
+                <Button Content="Buscar"
+                Style="{StaticResource RoundedButtonStyle}"
+                Click="ButtonBuscar_Click"
+                Width="100"
+                Height="39"/>
+            </StackPanel>
+
+            <!-- DERECHA: ComboBox con estilo -->
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Column="1">
+                <ComboBox x:Name="ComboBoxFiltro"
+                          Width="150"
+                          Height="34"
+                          Background="#7A1FA2"   
+                          Foreground="Black"
+                          BorderThickness="0"
+                          SelectionChanged="ComboBoxFiltro_SelectionChanged">
+                    <ComboBoxItem Content="Todos" Tag="Todos" IsSelected="True"/>
+                    <ComboBoxItem Content="Fotos" Tag="Foto"/>
+                    <ComboBoxItem Content="Videos" Tag="Video"/>
+                    <ComboBoxItem Content="Audios" Tag="Audio"/>
+                </ComboBox>
+            </StackPanel>
+
+
+        </Grid>
+
+
 
         <!-- Título -->
         <TextBlock Grid.Row="1" Text="Publicaciones recientes" FontSize="20" FontWeight="Bold" Foreground="White" Margin="0,0,0,10"/>

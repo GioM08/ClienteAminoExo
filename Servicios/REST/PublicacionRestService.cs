@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using static System.Net.WebRequestMethods;
 using ClienteAminoExo.Utils;
 using System.Windows;
+using System.Text.Json;
+
 
 namespace ClienteAminoExo.Servicios.REST
 {
@@ -64,7 +66,6 @@ namespace ClienteAminoExo.Servicios.REST
             }
 
             var responseJson = await response.Content.ReadAsStringAsync();
-            MessageBox.Show("Respuesta JSON: " + responseJson);
 
             var respuesta = JsonConvert.DeserializeObject<RespuestaCrearPublicacion>(responseJson);
             return respuesta?.publicacion;
@@ -92,18 +93,19 @@ namespace ClienteAminoExo.Servicios.REST
 
         public async Task EliminarPublicacionAsync(int identificador)
         {
-            var url = $"{BackendConfig.BackendBaseUrl}/publicaciones/{identificador}";
+            var url = $"{BackendConfig.BackendBaseUrl}/api/publicaciones/{identificador}";
 
-            var request = new HttpRequestMessage(HttpMethod.Delete, url);
-
-            
-            var contenido = new
+            var contenidoJson = new
             {
                 rol = SesionActual.Rol,
+                usuarioId = SesionActual.UsuarioId
             };
 
-            string json = JsonConvert.SerializeObject(contenido);
-            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            var json = System.Text.Json.JsonSerializer.Serialize(contenidoJson);
+            var request = new HttpRequestMessage(HttpMethod.Delete, url)
+            {
+                Content = new StringContent(json, Encoding.UTF8, "application/json")
+            };
 
             request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", SesionActual.Token);
 
@@ -117,12 +119,6 @@ namespace ClienteAminoExo.Servicios.REST
             }
         }
 
-
-        public async Task<bool> ActualizarPublicacionAsync(int idPublicacion, object datos)
-        {
-            var response = await _httpClient.PatchAsJsonAsync($"api/publicaciones/{idPublicacion}", datos);
-            return response.IsSuccessStatusCode;
-        }
 
         public void ActualizarHeaders()
         {

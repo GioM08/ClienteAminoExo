@@ -20,7 +20,7 @@ namespace ClienteAminoExo.Servicios.gRPC
         public RecursoGrpcService()
         {
             AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
-            var canal = GrpcChannel.ForAddress("http://localhost:50054");
+            var canal = GrpcChannel.ForAddress("http://192.168.233.88:50054");
             _cliente = new RecursoService.RecursoServiceClient(canal);
         }
 
@@ -84,7 +84,11 @@ namespace ClienteAminoExo.Servicios.gRPC
 
         public async Task<(bool exito, byte[] archivo, string mensaje)> DescargarRecursoAsync(string tipo, int identificador)
         {
-            using var channel = Grpc.Net.Client.GrpcChannel.ForAddress("http://localhost:50054");
+            using var channel = Grpc.Net.Client.GrpcChannel.ForAddress("http://192.168.233.88:50054", new GrpcChannelOptions
+            {
+                MaxReceiveMessageSize = 50 * 1024 * 1024
+            });
+
             var client = new RecursoService.RecursoServiceClient(channel);
 
             var request = new DescargarRecursoRequest
