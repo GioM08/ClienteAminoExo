@@ -8,6 +8,6 @@ namespace ClienteAminoExo.Utils
         /// <summary>
         /// URL base del backend REST.
         /// </summary>
-        public const string BackendBaseUrl = "http://localhost:3000";
+        public const string BackendBaseUrl = "http://192.168.233.88:3000";
     }
 }

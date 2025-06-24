@@ -42,11 +42,6 @@ namespace ClienteAminoExo.Paginas
 
         private async void PaginaInicio_Loaded(object sender, RoutedEventArgs e)
         {
-            if (SesionActual.Rol.Equals("Moderador"))
-            {
-                ComboBoxUsuarios.Visibility = Visibility.Visible;
-                CargarUsuarios();
-            }
 
             await CargarPublicaciones();
         }
@@ -56,32 +51,29 @@ namespace ClienteAminoExo.Paginas
         {
             WrapPanelPublicaciones.Children.Clear();
 
-            var publicaciones = await _publicacionService.ObtenerPublicacionesAsync();
+            string terminoBusqueda = TextBoxBusqueda?.Text?.Trim();
 
-            if (publicaciones == null)
+            List<PublicacionDTO> publicaciones;
+
+            if (!string.IsNullOrEmpty(terminoBusqueda))
             {
-                MessageBox.Show("⚠️ No se pudieron obtener publicaciones (es null)");
-                return;
+                var resultadoBusqueda = await _publicacionService.BuscarPublicacionesAsync(query: terminoBusqueda, pagina: 1, limite: 50);
+                publicaciones = resultadoBusqueda?.resultados ?? new List<PublicacionDTO>();
+            }
+            else
+            {
+                publicaciones = await _publicacionService.ObtenerPublicacionesAsync() ?? new List<PublicacionDTO>();
             }
 
             string tipoFiltro = "Todos";
             if (ComboBoxFiltro.SelectedItem is ComboBoxItem filtroItem && filtroItem.Tag != null)
                 tipoFiltro = filtroItem.Tag.ToString();
 
-            string usuarioFiltro = "Todos";
-            if (ComboBoxUsuarios.SelectedItem is ComboBoxItem usuarioItem && usuarioItem.Tag != null)
-                usuarioFiltro = usuarioItem.Tag.ToString();
-
-
             foreach (var pub in publicaciones)
             {
                 var recurso = pub.recurso;
 
-                
                 if (tipoFiltro != "Todos" && recurso?.tipo != tipoFiltro)
-                    continue;
-
-                if (SesionActual.Rol.Equals($"Moderador") && usuarioFiltro != "Todos" && pub.usuarioId.ToString() != usuarioFiltro)
                     continue;
 
                 var likes = await _reaccionService.ObtenerConteoPorPublicacionAsync(pub.identificador);
@@ -102,6 +94,7 @@ namespace ClienteAminoExo.Paginas
                 });
             }
         }
+
 
 
         private UIElement CrearTarjetaPublicacion(PublicacionDTO pub, RecursoDTO recurso, int likes, int comentarios)
@@ -163,9 +156,30 @@ namespace ClienteAminoExo.Paginas
                                 LoadedBehavior = MediaState.Manual,
                                 UnloadedBehavior = MediaState.Stop,
                                 Margin = new Thickness(0, 0, 0, 10),
-                                Source = new Uri(recurso.url, UriKind.Absolute)
+                                Source = new Uri(recurso.url, UriKind.Absolute),
+                                Volume = 0.0
                             };
-                             
+
+                            video.Loaded += (s, e) =>
+                            {
+                                try
+                                {
+                                    video.Play();
+
+                                    Task.Delay(500).ContinueWith(_ =>
+                                    {
+                                        video.Dispatcher.Invoke(() =>
+                                        {
+                                            video.Pause();
+                                        });
+                                    });
+                                }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show($"Error al reproducir vista previa: {ex.Message}");
+                                }
+                            };
+
                             stack.Children.Add(video);
                         }
                         else if (recurso.tipo == "Audio")
@@ -212,7 +226,7 @@ namespace ClienteAminoExo.Paginas
             stack.Children.Add(interacciones);
 
 
-            if (SesionActual.Rol.Equals("Moderador"))
+            if (SesionActual.Rol == "Moderador" || pub.usuarioId == SesionActual.UsuarioId)
             {
                 var btnEliminar = new Button
                 {
@@ -225,14 +239,20 @@ namespace ClienteAminoExo.Paginas
 
                 btnEliminar.Click += async (s, e) =>
                 {
-                    var resultado = MessageBox.Show("¿Estás seguro de que deseas eliminar esta publicación?", "Confirmar eliminación", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                    var resultado = MessageBox.Show(
+                        "¿Estás seguro de que deseas eliminar esta publicación?",
+                        "Confirmar eliminación",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Warning
+                    );
+
                     if (resultado == MessageBoxResult.Yes)
                     {
                         try
                         {
                             await _publicacionService.EliminarPublicacionAsync(pub.identificador);
                             MessageBox.Show("Publicación eliminada correctamente.");
-                            await CargarPublicaciones(); 
+                            await CargarPublicaciones();
                         }
                         catch (Exception ex)
                         {
@@ -264,16 +284,9 @@ namespace ClienteAminoExo.Paginas
         }
 
 
-        private async void CargarUsuarios()
+        private async void ButtonBuscar_Click(object sender, RoutedEventArgs e)
         {
-            var usuarios = await new UsuarioRestService(SesionActual.Token).ObtenerUsuariosAsync();
-            ComboBoxUsuarios.Items.Clear();
-            ComboBoxUsuarios.Items.Add(new ComboBoxItem { Content = "Todos", Tag = "Todos", IsSelected = true });
-
-            foreach (var user in usuarios)
-            {
-                ComboBoxUsuarios.Items.Add(new ComboBoxItem { Content = user.nombreUsuario, Tag = user.usuarioId });
-            }
+            await CargarPublicaciones();
         }
 
 

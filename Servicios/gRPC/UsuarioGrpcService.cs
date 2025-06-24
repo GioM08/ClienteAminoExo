@@ -18,7 +18,7 @@ namespace ClienteAminoExo.Servicios.gRPC
         public UsuarioGrpcService()
         {
             AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
-            var canal = GrpcChannel.ForAddress("http://localhost:50051");
+            var canal = GrpcChannel.ForAddress("http://192.168.233.88:50051");
             _cliente = new UsuarioService.UsuarioServiceClient(canal);
         }
 
