@@ -51,7 +51,6 @@ namespace ClienteAminoExo.Paginas
                 notificaciones = new ObservableCollection<NotificacionRestService.Notificacion>(respuesta.resultados);
                 ListaNotificaciones.ItemsSource = notificaciones;
 
-                // Usar evento cuando los ítems ya estén generados
                 ListaNotificaciones.ItemContainerGenerator.StatusChanged += ItemContainerGenerator_StatusChanged;
             }
             catch (Exception ex)
@@ -77,7 +76,6 @@ namespace ClienteAminoExo.Paginas
                     }
                 }
 
-                // Desuscribirse para evitar repeticiones
                 ListaNotificaciones.ItemContainerGenerator.StatusChanged -= ItemContainerGenerator_StatusChanged;
             }
         }

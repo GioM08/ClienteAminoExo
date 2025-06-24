@@ -11,7 +11,7 @@ namespace ClienteAminoExo.Servicios.gRPC
         public EstadisticaGrpcService()
         {
             AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
-            var canal = GrpcChannel.ForAddress("http://localhost:50055"); // Usa el puerto correspondiente
+            var canal = GrpcChannel.ForAddress("http://localhost:50055");
             _cliente = new EstadisticasService.EstadisticasServiceClient(canal);
         }
 
