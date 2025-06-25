@@ -14,6 +14,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ClienteAminoExo.Servicios.gRPC;
+using Usuario;
+using System.Collections.ObjectModel;
 
 
 namespace ClienteAminoExo.Paginas
@@ -32,12 +34,17 @@ namespace ClienteAminoExo.Paginas
         private readonly ComentarioRestService _comentarioService = new(SesionActual.Token);
         private readonly ReaccionRestService _reaccionService = new(SesionActual.Token);
         private readonly RecursoRestService _recursoService = new(SesionActual.Token);
+        private readonly UsuarioRestService _usuarioService = new(SesionActual.Token);
+        private ObservableCollection<ComentarioDTO> _comentarios = new ObservableCollection<ComentarioDTO>();
+
 
         public VentanaDetallePublicacion(PublicacionDTO publicacion)
         {
             InitializeComponent();
             _publicacion = publicacion;
             CargarPublicacion();
+            ListaComentarios.ItemsSource = _comentarios;
+
             this.Loaded += VentanaDetallePublicacion_Loaded;
         }
 
@@ -118,10 +125,19 @@ namespace ClienteAminoExo.Paginas
 
         private async Task CargarComentarios()
         {
-            var comentarios = await _comentarioService.ObtenerComentariosPorPublicacionAsync(_publicacion.identificador
-            );
-            ListaComentarios.ItemsSource = comentarios;
+            var comentarios = await _comentarioService.ObtenerComentariosPorPublicacionAsync(_publicacion.identificador);
+
+            _comentarios.Clear();
+
+            foreach (var comentario in comentarios)
+            {
+                var usuario = await _usuarioService.ObtenerUsuarioPorIdAsync(comentario.usuarioId);
+                comentario.nombreUsuario = usuario?.nombreUsuario ?? "Desconocido";
+                _comentarios.Add(comentario); 
+            }
         }
+
+
 
         private async void BtnEnviarComentario_Click(object sender, RoutedEventArgs e)
         {
@@ -139,14 +155,110 @@ namespace ClienteAminoExo.Paginas
             if (exito)
             {
                 TxtComentario.Clear();
-                MessageBox.Show("Comentario enviado exitosamente.");
                 await CargarComentarios();
+
+                MessageBox.Show("Comentario enviado exitosamente.");
+                if (_comentarios.Count > 0)
+                {
+                    ListaComentarios.ScrollIntoView(_comentarios[_comentarios.Count - 1]);
+                }
             }
             else
             {
                 MessageBox.Show("Error al enviar comentario.");
             }
         }
+
+        private async void BtnActualizarComentario_Click(object sender, RoutedEventArgs e)
+        {
+            var boton = sender as Button;
+            if (boton?.Tag is ComentarioDTO comentario)
+            {
+                var contenedor = VisualTreeHelper.GetParent(boton);
+                TextBox? txt = null;
+
+                while (contenedor != null && contenedor is not ContentPresenter)
+                {
+                    contenedor = VisualTreeHelper.GetParent(contenedor);
+                }
+
+                if (contenedor is ContentPresenter presenter)
+                {
+                    txt = FindVisualChild<TextBox>(presenter);
+                }
+
+                if (txt == null || string.IsNullOrWhiteSpace(txt.Text))
+                {
+                    MessageBox.Show("El texto del comentario no puede estar vacío.");
+                    return;
+                }
+
+                if (comentario.usuarioId != SesionActual.UsuarioId)
+                {
+                    MessageBox.Show("Solo puedes actualizar tus propios comentarios.");
+                    return;
+                }
+
+                var result = MessageBox.Show("¿Deseas actualizar este comentario?", "Confirmar", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result != MessageBoxResult.Yes) return;
+
+                var resultado = await _comentarioService.ActualizarComentarioAsync(comentario.comentarioId, txt.Text.Trim());
+
+                if (resultado)
+                {
+                    MessageBox.Show("Comentario actualizado.");
+                    await CargarComentarios();
+                }
+                else
+                {
+                    MessageBox.Show("No se pudo actualizar el comentario.");
+                }
+            }
+        }
+
+
+        private static T? FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T typedChild)
+                    return typedChild;
+
+                var descendant = FindVisualChild<T>(child);
+                if (descendant != null)
+                    return descendant;
+            }
+            return null;
+        }
+
+        private async void BtnEliminarComentario_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button boton && boton.Tag is ComentarioDTO comentario)
+            {
+                if (comentario.usuarioId != SesionActual.UsuarioId)
+                {
+                    MessageBox.Show("Solo puedes eliminar tus propios comentarios.");
+                    return;
+                }
+
+                var result = MessageBox.Show("¿Estás seguro de que deseas eliminar este comentario?", "Confirmar eliminación", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result != MessageBoxResult.Yes) return;
+
+                var exito = await _comentarioService.EliminarComentarioAsync(comentario.comentarioId);
+
+                if (exito)
+                {
+                    MessageBox.Show("Comentario eliminado correctamente.");
+                    await CargarComentarios(); 
+                }
+                else
+                {
+                    MessageBox.Show("Error al eliminar el comentario.");
+                }
+            }
+        }
+
 
         private async void Reaccionar(string tipo)
         {

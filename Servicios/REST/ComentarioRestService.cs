@@ -56,6 +56,26 @@ namespace ClienteAminoExo.Servicios.REST
             var comentarios = await ObtenerComentariosPorPublicacionAsync(publicacionId);
             return comentarios?.Count ?? 0;
         }
+
+        public async Task<bool> ActualizarComentarioAsync(int comentarioId, string nuevoTexto)
+        {
+            var contenido = new StringContent(
+                JsonConvert.SerializeObject(new { texto = nuevoTexto }),
+                Encoding.UTF8,
+                "application/json"
+            );
+
+            var response = await _httpClient.PutAsync($"api/comentarios/{comentarioId}", contenido);
+            return response.IsSuccessStatusCode;
+        }
+
+        public async Task<bool> EliminarComentarioAsync(int comentarioId)
+        {
+            var response = await _httpClient.DeleteAsync($"api/comentarios/{comentarioId}");
+            return response.IsSuccessStatusCode;
+        }
+
+
     }
 
 }
