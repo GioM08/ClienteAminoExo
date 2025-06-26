@@ -108,18 +108,29 @@ namespace ClienteAminoExo.Servicios.REST
             }
         }
 
-        public async Task<List<Usuario>> ObtenerUsuariosAsync()
+        public async Task<UsuarioDTO?> ObtenerUsuarioPorIdAsync(int usuarioId)
         {
-            var response = await _httpClient.GetAsync("api/usuarios"); 
+            var response = await _httpClient.GetAsync($"api/usuarios/{usuarioId}");
             if (!response.IsSuccessStatusCode)
-            {
-                return new List<Usuario>();
-            }
+                return null;
 
             var json = await response.Content.ReadAsStringAsync();
 
-            var usuarios = JsonConvert.DeserializeObject<List<Usuario>>(json);
-            return usuarios ?? new List<Usuario>();
+            // La respuesta es un objeto que contiene { ok: true, usuario: { ... } }
+            var wrapper = JsonConvert.DeserializeObject<UsuarioRespuestaDTO>(json);
+            return wrapper?.usuario;
+        }
+
+        public class UsuarioRespuestaDTO
+        {
+            public bool ok { get; set; }
+            public UsuarioDTO? usuario { get; set; }
+        }
+
+        public class UsuarioDTO
+        {
+            public int usuarioId { get; set; }
+            public string nombreUsuario { get; set; }
         }
 
 
