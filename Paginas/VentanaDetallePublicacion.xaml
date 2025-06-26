@@ -22,119 +22,120 @@
 
             <DockPanel LastChildFill="True">
 
-                <!-- Título de la publicación -->
-                <TextBlock x:Name="TxtTitulo"
-                           FontSize="20"
-                           FontWeight="Bold"
-                           Foreground="White"
-                           DockPanel.Dock="Top"
-                           TextWrapping="Wrap"
-                           Margin="0,0,0,10"/>
-
-                <!-- Contenido de la publicación -->
-                <TextBlock x:Name="TxtContenido"
-                           FontSize="14"
-                           Foreground="LightGray"
-                           DockPanel.Dock="Top"
-                           TextWrapping="Wrap"
-                           Margin="0,0,0,15"/>
-
-                <!-- Multimedia -->
-                <Border DockPanel.Dock="Top" Margin="0,0,0,15">
-                    <ContentControl x:Name="RecursoMultimedia"/>
-                </Border>
-
-                <!-- Reacciones -->
-                <StackPanel Orientation="Horizontal"
-                            HorizontalAlignment="Center"
-                            DockPanel.Dock="Top"
-                            Margin="0,0,0,15">
-                    <Button Content="Descargar recurso"
-                            Style="{StaticResource RoundedButtonStyle}"
-                            Margin="10"
-                            Click="BtnDescargarRecurso_Click"
-                            VerticalAlignment="Top" Height="35" Width="123" FontSize="12"/>
-                    <Button Content="👍" Width="50" Margin="5" Click="BtnLike_Click" Background="#4CAF50"/>
-                    <Button Content="👎" Width="50" Margin="5" Click="BtnDislike_Click" Background="#F44336"/>
-                    <Button Content="😃" Width="50" Margin="5" Click="BtnEmoji_Click" Background="#FFCA28"/>
-                </StackPanel>
-
-                <!-- Panel de comentarios-->
-                <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Center" Margin="0,0,0,15">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBox x:Name="TxtComentario" Width="240" Height="30" Margin="0,0,10,0" />
-                        <Button Content="Enviar" Width="80" Click="BtnEnviarComentario_Click" Height="33"/>
-                    </StackPanel>
-                </StackPanel>
-
-                <GroupBox Header="Comentarios" Foreground="White" Margin="0,10,0,0" HorizontalAlignment="Center" Width="400">
-                    <ListBox x:Name="ListaComentarios"
-                             BorderThickness="0"
-                             Background="Transparent"
-                             Padding="0,0,0,10"
-                             VerticalAlignment="Stretch"
-                             VerticalContentAlignment="Stretch"
-                             ScrollViewer.VerticalScrollBarVisibility="Auto"
-                             MaxHeight="300">
-
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Border BorderThickness="0,0,0,1" BorderBrush="Gray" Padding="5">
-                                    <StackPanel>
-                                        <TextBlock FontWeight="Bold" Foreground="White" Text="{Binding nombreUsuario}" />
-
-                                        <!-- Comentario de otro usuario -->
-                                        <TextBlock Text="{Binding texto}"
-                                                   Foreground="LightGray"
-                                                   TextWrapping="Wrap"
-                                                   Margin="0,5,0,0"
-                                                   Visibility="{Binding usuarioId, Converter={StaticResource EsComentarioDelUsuarioConverter}, ConverterParameter=invertido}" />
-
-                                        <!-- Comentario editable del propio usuario con botones -->
-                                        <StackPanel Orientation="Horizontal"
-                                                    Margin="0,5,0,0"
-                                                    Visibility="{Binding usuarioId, Converter={StaticResource EsComentarioDelUsuarioConverter}}">
-
-                                            <TextBox Text="{Binding texto}"
-                                                     Foreground="Black"
-                                                     Background="White"
-                                                     Width="200"
-                                                     Margin="0,0,10,0" />
-
-                                            <Button Content="Actualizar"
-                                                    Width="70"
-                                                    Margin="0,0,5,0"
-                                                    Click="BtnActualizarComentario_Click"
-                                                    Tag="{Binding}" />
-
-                                            <Button Content="Eliminar"
-                                                    Width="70"
-                                                    Click="BtnEliminarComentario_Click"
-                                                    Tag="{Binding}" />
-                                        </StackPanel>
-                                    </StackPanel>
-                                </Border>
-                            </DataTemplate>
-
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </GroupBox>
-
-
-
+                <!-- Botón fijo al fondo -->
                 <Button x:Name="BtnEliminarPublicacion"
-                        Content="🗑 Eliminar Publicación"
-                        Width="200"
-                        Height="35"
+            Content="🗑 Eliminar Publicación"
+            Width="200"
+            Height="35"
+            HorizontalAlignment="Center"
+            DockPanel.Dock="Bottom"
+            Margin="0,10,0,0"
+            Click="BtnEliminarPublicacion_Click"
+            Visibility="Collapsed"
+            Background="Red"
+            Foreground="White"
+            FontWeight="Bold"/>
+
+                <!-- Scroll del contenido principal -->
+                <ScrollViewer VerticalScrollBarVisibility="Auto" DockPanel.Dock="Top">
+                    <StackPanel Margin="0,0,0,10">
+
+                        <!-- Título de la publicación -->
+                        <TextBlock x:Name="TxtTitulo"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Foreground="White"
+                       TextWrapping="Wrap"
+                       Margin="0,0,0,10"/>
+
+                        <!-- Contenido de la publicación -->
+                        <TextBlock x:Name="TxtContenido"
+                       FontSize="14"
+                       Foreground="LightGray"
+                       TextWrapping="Wrap"
+                       Margin="0,0,0,15"/>
+
+                        <!-- Multimedia -->
+                        <Border Margin="0,0,0,15">
+                            <ContentControl x:Name="RecursoMultimedia"/>
+                        </Border>
+
+                        <!-- Reacciones -->
+                        <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Center"
-                        Margin="0,10,0,0"
-                        Click="BtnEliminarPublicacion_Click"
-                        Visibility="Collapsed"
-                        Background="Red"
-                        Foreground="White"
-                        FontWeight="Bold"/>
+                        Margin="0,0,0,15">
+                            <Button Content="Descargar recurso"
+                        Style="{StaticResource RoundedButtonStyle}"
+                        Margin="10"
+                        Click="BtnDescargarRecurso_Click"
+                        VerticalAlignment="Top" Height="35" Width="123" FontSize="12"/>
+                            <Button Content="👍" Width="50" Margin="5" Click="BtnLike_Click" Background="#4CAF50"/>
+                            <Button Content="👎" Width="50" Margin="5" Click="BtnDislike_Click" Background="#F44336"/>
+                            <Button Content="😃" Width="50" Margin="5" Click="BtnEmoji_Click" Background="#FFCA28"/>
+                        </StackPanel>
 
+                        <!-- Panel para escribir comentario -->
+                        <StackPanel HorizontalAlignment="Center" Margin="0,0,0,15">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox x:Name="TxtComentario" Width="240" Height="30" Margin="0,0,10,0" />
+                                <Button Content="Enviar" Width="80" Click="BtnEnviarComentario_Click" Height="33"/>
+                            </StackPanel>
+                        </StackPanel>
 
+                        <!-- Comentarios -->
+                        <GroupBox Header="Comentarios" Foreground="White" HorizontalAlignment="Center" Width="400">
+                            <ListBox x:Name="ListaComentarios"
+                         BorderThickness="0"
+                         Background="Transparent"
+                         Padding="0,0,0,10"
+                         VerticalAlignment="Stretch"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         MaxHeight="300">
+
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderThickness="0,0,0,1" BorderBrush="Gray" Padding="5">
+                                            <StackPanel>
+                                                <TextBlock FontWeight="Bold" Foreground="White" Text="{Binding nombreUsuario}" />
+
+                                                <!-- Comentario de otro usuario -->
+                                                <TextBlock Text="{Binding texto}"
+                                               Foreground="LightGray"
+                                               TextWrapping="Wrap"
+                                               Margin="0,5,0,0"
+                                               Visibility="{Binding usuarioId, Converter={StaticResource EsComentarioDelUsuarioConverter}, ConverterParameter=invertido}" />
+
+                                                <!-- Comentario editable del propio usuario -->
+                                                <StackPanel Orientation="Horizontal"
+                                                Margin="0,5,0,0"
+                                                Visibility="{Binding usuarioId, Converter={StaticResource EsComentarioDelUsuarioConverter}}">
+
+                                                    <TextBox Text="{Binding texto}"
+                                                 Foreground="Black"
+                                                 Background="White"
+                                                 Width="200"
+                                                 Margin="0,0,10,0" />
+
+                                                    <Button Content="Actualizar"
+                                                Width="70"
+                                                Margin="0,0,5,0"
+                                                Click="BtnActualizarComentario_Click"
+                                                Tag="{Binding}" />
+
+                                                    <Button Content="Eliminar"
+                                                Width="70"
+                                                Click="BtnEliminarComentario_Click"
+                                                Tag="{Binding}" />
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </GroupBox>
+
+                    </StackPanel>
+                </ScrollViewer>
             </DockPanel>
         </Border>
     </Grid>

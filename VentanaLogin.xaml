@@ -18,6 +18,11 @@
                 Effect="{StaticResource VidrioSombra}">
 
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="300" Margin="15">
+                <Image Source="/Recursos/ic_music_logo.png"
+       Width="80"
+       Height="80"
+       Margin="0,0,0,10"
+       HorizontalAlignment="Center"/>
 
                 <TextBlock Text="EXO" FontSize="28" FontWeight="Bold" 
                            Foreground="{StaticResource ColorMorado}" 
@@ -57,7 +62,7 @@
                 <TextBlock FontSize="12" TextAlignment="Center" Margin="0,10,0,0"
                            Foreground="#CCCCCC" MouseDown="IrARegistro_MouseDown" Cursor="Hand">
                     ¿No tienes cuenta? 
-                    <Run Text="Regístrate aquí" Foreground="{StaticResource ColorMorado}"/>
+                    <Run Text="Regístrate aquí" Foreground="GhostWhite"/>
                 </TextBlock>
 
 

@@ -56,7 +56,7 @@ namespace ClienteAminoExo.Paginas
                     GraficaRecursos.Series.Add(new ColumnSeries
                     {
                         Title = recurso.Tipo,
-                        Values = new ChartValues<int> { recurso.Total },
+                        Values = new ChartValues<double> { recurso.Total },
                         DataLabels = true
                     });
 
@@ -72,7 +72,7 @@ namespace ClienteAminoExo.Paginas
                 GraficaRecursos.AxisY.Add(new Axis
                 {
                     Title = "Total",
-                    LabelFormatter = value => value.ToString("N0")
+                    LabelFormatter = value => value.ToString("N2")
                 });
             }
             catch (Exception ex)
