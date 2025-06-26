@@ -55,6 +55,7 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                     <Button Content="📄 Exportar a PDF"
+                            Style="{StaticResource RoundedButtonStyle}"
         Click="BtnExportarPDF_Click"
         HorizontalAlignment="Right"
         Margin="0,10,0,0"/>

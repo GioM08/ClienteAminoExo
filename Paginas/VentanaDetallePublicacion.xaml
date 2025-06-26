@@ -45,13 +45,13 @@
                             DockPanel.Dock="Top"
                             Margin="0,0,0,15">
                     <Button Content="Descargar recurso"
+                            Style="{StaticResource RoundedButtonStyle}"
                             Margin="10"
                             Click="BtnDescargarRecurso_Click"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"/>
-                    <Button Content="👍" Width="50" Margin="5" Click="BtnLike_Click"/>
-                    <Button Content="👎" Width="50" Margin="5" Click="BtnDislike_Click"/>
-                    <Button Content="😃" Width="50" Margin="5" Click="BtnEmoji_Click"/>
+                            VerticalAlignment="Top" Height="35" Width="123" FontSize="12"/>
+                    <Button Content="👍" Width="50" Margin="5" Click="BtnLike_Click" Background="#4CAF50"/>
+                    <Button Content="👎" Width="50" Margin="5" Click="BtnDislike_Click" Background="#F44336"/>
+                    <Button Content="😃" Width="50" Margin="5" Click="BtnEmoji_Click" Background="#FFCA28"/>
                 </StackPanel>
 
                 <!-- Panel de comentarios-->

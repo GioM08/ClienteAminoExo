@@ -55,7 +55,14 @@ namespace ClienteAminoExo.Paginas
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message);
+                if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+                {
+                    MessageBox.Show("No se pudo establecer conexión. Verifica tu conexión a Internet.", "Sin conexión", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+                else
+                {
+                    MessageBox.Show("Error al enviar comentario, contacte con el soporte o espere que se restablezca", "Error del servidor", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 

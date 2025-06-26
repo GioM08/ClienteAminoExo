@@ -119,7 +119,7 @@ namespace ClienteAminoExo.Paginas
                 if (response.IsSuccessStatusCode)
                 {
                     MessageBox.Show("Perfil actualizado correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
-                    // Puedes recargar el perfil si lo deseas
+                   
                 }
                 else
                 {
@@ -137,7 +137,7 @@ namespace ClienteAminoExo.Paginas
 
         private void BtnAbrirCambiarContrasena_Click(object sender, RoutedEventArgs e)
         {
-            var ventana = new VentanaCaambiarContrasena(); // ya usará el id global
+            var ventana = new VentanaCaambiarContrasena();
             ventana.ShowDialog();
         }
 
@@ -161,14 +161,10 @@ namespace ClienteAminoExo.Paginas
                 {
                     MessageBox.Show("Tu cuenta ha sido eliminada correctamente.", "Cuenta eliminada", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    // Limpiar sesión
                     SesionActual.CerrarSesion();
 
-                    // Redirigir al login
                     var ventanaLogin = new VentanaLogin();
                     ventanaLogin.Show();
-
-                    // Cerrar ventana actual si estás dentro de un Frame
                     Window.GetWindow(this)?.Close();
                 }
                 else
@@ -179,7 +175,14 @@ namespace ClienteAminoExo.Paginas
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al intentar eliminar la cuenta:\n" + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+                {
+                    MessageBox.Show("No se pudo establecer conexión. Verifica tu conexión a Internet.", "Sin conexión", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+                else
+                {
+                    MessageBox.Show("Error al intentar conectar con el servidor, contacte con el soporte o espere que se restablezca", "Error del servidor", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 

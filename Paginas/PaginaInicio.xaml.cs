@@ -52,7 +52,6 @@ namespace ClienteAminoExo.Paginas
             WrapPanelPublicaciones.Children.Clear();
 
             string terminoBusqueda = TextBoxBusqueda?.Text?.Trim();
-
             List<PublicacionDTO> publicaciones;
 
             if (!string.IsNullOrEmpty(terminoBusqueda))
@@ -76,10 +75,20 @@ namespace ClienteAminoExo.Paginas
                 if (tipoFiltro != "Todos" && recurso?.tipo != tipoFiltro)
                     continue;
 
-                var likes = await _reaccionService.ObtenerConteoPorPublicacionAsync(pub.identificador);
+                var reacciones = await _reaccionService.ObtenerReaccionesPorPublicacionAsync(pub.identificador);
                 var comentarios = await _comentarioService.ObtenerConteoPorPublicacionAsync(pub.identificador);
 
-                var tarjeta = CrearTarjetaPublicacion(pub, recurso, likes, comentarios);
+                var conteo = reacciones
+                    .GroupBy(r => r.tipo)
+                    .ToDictionary(g => g.Key, g => g.Count());
+
+                int likes = conteo.ContainsKey("like") ? conteo["like"] : 0;
+                int dislikes = conteo.ContainsKey("dislike") ? conteo["dislike"] : 0;
+                int loves = conteo.ContainsKey("love") ? conteo["love"] : 0;
+
+                var reaccionUsuario = await _reaccionService.ObtenerReaccionDelUsuarioAsync(pub.identificador, SesionActual.UsuarioId);
+
+                var tarjeta = CrearTarjetaPublicacion(pub, recurso, likes, dislikes, loves, comentarios, reaccionUsuario?.tipo);
                 WrapPanelPublicaciones.Children.Add(tarjeta);
             }
 
@@ -95,9 +104,7 @@ namespace ClienteAminoExo.Paginas
             }
         }
 
-
-
-        private UIElement CrearTarjetaPublicacion(PublicacionDTO pub, RecursoDTO recurso, int likes, int comentarios)
+        private UIElement CrearTarjetaPublicacion(PublicacionDTO pub, RecursoDTO recurso, int likes, int dislikes, int loves, int comentarios, string reaccionUsuario)
         {
             var border = new Border
             {
@@ -119,34 +126,24 @@ namespace ClienteAminoExo.Paginas
 
                 if (!string.IsNullOrEmpty(recurso.url))
                 {
-                    Uri originalUri = new Uri(recurso.url);
-
-                    var urlAjustada = new UriBuilder(originalUri)
-                    {
-                        Host = "localhost"
-                    }.Uri.ToString();
-
+                    var originalUri = new Uri(recurso.url);
+                    var urlAjustada = new UriBuilder(originalUri) { Host = "localhost" }.Uri.ToString();
                     recurso.url = urlAjustada;
                 }
-
-
 
                 if (!string.IsNullOrEmpty(recurso.url))
                 {
                     try
                     {
-                        
-
                         if (recurso.tipo == "Foto")
                         {
-                            var imagen = new Image
+                            stack.Children.Add(new Image
                             {
                                 Height = 150,
                                 Stretch = Stretch.UniformToFill,
                                 Margin = new Thickness(0, 0, 0, 10),
                                 Source = new BitmapImage(new Uri(recurso.url, UriKind.Absolute))
-                            };
-                            stack.Children.Add(imagen);
+                            });
                         }
                         else if (recurso.tipo == "Video")
                         {
@@ -165,13 +162,9 @@ namespace ClienteAminoExo.Paginas
                                 try
                                 {
                                     video.Play();
-
                                     Task.Delay(500).ContinueWith(_ =>
                                     {
-                                        video.Dispatcher.Invoke(() =>
-                                        {
-                                            video.Pause();
-                                        });
+                                        video.Dispatcher.Invoke(() => video.Pause());
                                     });
                                 }
                                 catch (Exception ex)
@@ -184,16 +177,14 @@ namespace ClienteAminoExo.Paginas
                         }
                         else if (recurso.tipo == "Audio")
                         {
-                            var audio = new MediaElement
+                            stack.Children.Add(new MediaElement
                             {
                                 Height = 30,
                                 LoadedBehavior = MediaState.Manual,
                                 UnloadedBehavior = MediaState.Stop,
                                 Margin = new Thickness(0, 0, 0, 10),
                                 Source = new Uri(recurso.url, UriKind.Absolute)
-                            };
-                            ; 
-                            stack.Children.Add(audio);
+                            });
                         }
                     }
                     catch (Exception ex)
@@ -222,9 +213,80 @@ namespace ClienteAminoExo.Paginas
 
             var interacciones = new StackPanel { Orientation = Orientation.Horizontal };
             interacciones.Children.Add(new TextBlock { Text = $"👍 {likes}", Foreground = Brushes.White, Margin = new Thickness(5, 0, 10, 0) });
+            interacciones.Children.Add(new TextBlock { Text = $"👎 {dislikes}", Foreground = Brushes.White, Margin = new Thickness(0, 0, 10, 0) });
+            interacciones.Children.Add(new TextBlock { Text = $"😍 {loves}", Foreground = Brushes.White, Margin = new Thickness(0, 0, 10, 0) });
             interacciones.Children.Add(new TextBlock { Text = $"💬 {comentarios}", Foreground = Brushes.White });
             stack.Children.Add(interacciones);
 
+            var panelReaccion = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 5, 0, 0) };
+
+            void AgregarBotonEmoji(string emoji, string tipo, string tooltip)
+            {
+                var boton = new Button
+                {
+                    Content = emoji,
+                    ToolTip = tooltip,
+                    Width = 40,
+                    Height = 40,
+                    Margin = new Thickness(5),
+                    FontSize = 16,
+                    Background = tipo == reaccionUsuario ? Brushes.DarkCyan : Brushes.Gray,
+                    Foreground = Brushes.White,
+                    BorderBrush = Brushes.Transparent,
+                    Tag = tipo
+                };
+
+                boton.Click += async (s, e) =>
+                {
+                    if (tipo == reaccionUsuario)
+                    {
+                        MessageBox.Show("Ya tienes esta reacción.");
+                        return;
+                    }
+
+                    bool exito;
+
+                    var reaccionActual = await _reaccionService.ObtenerReaccionDelUsuarioAsync(pub.identificador, SesionActual.UsuarioId);
+
+                    if (reaccionActual != null)
+                    {
+                        reaccionActual.tipo = tipo;
+                        reaccionActual.fecha = DateTime.UtcNow;
+
+                        exito = await _reaccionService.ActualizarReaccionAsync(reaccionActual);
+
+                        if (!exito)
+                            MessageBox.Show("No se pudo actualizar la reacción, espere a que el servidor responsa.");
+                    }
+                    else
+                    {
+                        var nuevaReaccion = new ReaccionDTO
+                        {
+                            tipo = tipo,
+                            publicacionId = pub.identificador,
+                            usuarioId = SesionActual.UsuarioId,
+                            nombreUsuario = SesionActual.nombreUsuario,
+                            fecha = DateTime.UtcNow
+                        };
+
+                        exito = await _reaccionService.CrearReaccionAsync(nuevaReaccion);
+
+                        if (!exito)
+                            MessageBox.Show("No se pudo crear la reacción, espere a que el servidor responda.");
+                    }
+
+                    if (exito)
+                        await CargarPublicaciones();
+                };
+
+                panelReaccion.Children.Add(boton);
+            }
+
+            AgregarBotonEmoji("👍", "like", "Dar like");
+            AgregarBotonEmoji("👎", "dislike", "Dar dislike");
+            AgregarBotonEmoji("😍", "love", "Enviar amor");
+
+            stack.Children.Add(panelReaccion);
 
             if (SesionActual.Rol == "Moderador" || pub.usuarioId == SesionActual.UsuarioId)
             {
@@ -256,7 +318,14 @@ namespace ClienteAminoExo.Paginas
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show($"Error al eliminar publicación: {ex.Message}");
+                            if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+                            {
+                                MessageBox.Show("No se pudo establecer conexión. Verifica tu conexión a Internet.", "Sin conexión", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            }
+                            else
+                            {
+                                MessageBox.Show("Error al intentar conectar con el servidor, contacte con el soporte o espere que se restablezca", "Error del servidor", MessageBoxButton.OK, MessageBoxImage.Error);
+                            }
                         }
                     }
                 };
@@ -273,9 +342,8 @@ namespace ClienteAminoExo.Paginas
             };
 
             return border;
-
-
         }
+
 
         private async void ComboBoxFiltro_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

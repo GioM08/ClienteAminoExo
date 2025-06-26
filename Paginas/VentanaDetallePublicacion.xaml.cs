@@ -56,7 +56,14 @@ namespace ClienteAminoExo.Paginas
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error al cargar recurso: {ex.Message}");
+                    if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+                    {
+                        MessageBox.Show("No se pudo establecer conexión. Verifica tu conexión a Internet.", "Sin conexión", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Error al conectar con el servidor, contacte con el soporte o espere que se restablezca", "Error del servidor", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
 
@@ -144,7 +151,14 @@ namespace ClienteAminoExo.Paginas
             }
             else
             {
-                MessageBox.Show("Error al enviar comentario.");
+                if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+                {
+                    MessageBox.Show("No se pudo establecer conexión. Verifica tu conexión a Internet.", "Sin conexión", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+                else
+                {
+                    MessageBox.Show("Error al enviar comentario, contacte con el soporte o espere que se restablezca", "Error del servidor", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
@@ -163,7 +177,7 @@ namespace ClienteAminoExo.Paginas
                 };
 
                 var ok = await _reaccionService.CrearReaccionAsync(nueva);
-                MessageBox.Show(ok ? "¡Reacción creada exitosamente!" : "❌ Error al crear reacción.");
+                MessageBox.Show(ok ? "¡Reacción creada exitosamente!" : "Error al crear reacción.");
             }
             else if (tipoActual == tipo)
             {
@@ -256,7 +270,14 @@ namespace ClienteAminoExo.Paginas
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error al eliminar la publicación: {ex.Message}");
+                    if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+                    {
+                        MessageBox.Show("No se pudo establecer conexión. Verifica tu conexión a Internet.", "Sin conexión", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                    else
+                    {
+                        MessageBox.Show($"hubo un error al eliminar la publicación, contacte con el soporte o espere que se restablezca", "Error del servidor", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
         }

@@ -74,7 +74,14 @@ namespace ClienteAminoExo
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al conectar con el servidor: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+                {
+                    MessageBox.Show("No se pudo establecer conexión. Verifica tu conexión a Internet.", "Sin conexión", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+                else
+                {
+                    MessageBox.Show($"Error al conectar con el servidor, contacte con el soporte o espere que se restablezca", "Error del servidor", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 

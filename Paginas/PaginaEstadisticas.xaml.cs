@@ -22,49 +22,66 @@ namespace ClienteAminoExo.Paginas
             TxtTituloEstadisticas.Text = $"📊 Estadísticas generales del {DateTime.Now:dd/MM/yyyy}";
         }
 
+
         private async void CargarEstadisticas()
         {
-            var servicio = new EstadisticaGrpcService();
-            var estadisticas = await servicio.ObtenerEstadisticasAsync();
-
-            TxtTopLikes.Text = $"📌 ID publicación con más likes: {estadisticas.TopLikes.PublicacionId} ({estadisticas.TopLikes.Total} likes)";
-            TxtTopComentarios.Text = $"💬 ID publicación con más comentarios: {estadisticas.TopComentarios.PublicacionId} ({estadisticas.TopComentarios.Total} comentarios)";
-            TxtTotalPublicaciones.Text = $"📝 Total de publicaciones: {estadisticas.TotalPublicaciones}";
-            TxtDiaTop.Text = $"📅 Día con más publicaciones: {estadisticas.DiaConMasPublicaciones} ({estadisticas.PublicacionesEnEseDia})";
-            TxtUsuarioTopPublicaciones.Text = $"👤 Usuario con más publicaciones: {estadisticas.UsuarioTopPublicaciones.Nombre} (ID: {estadisticas.UsuarioTopPublicaciones.UsuarioId})";
-            TxtUsuarioTopComentarios.Text = $"💬 Usuario con más comentarios: {estadisticas.UsuarioTopComentarios.Nombre} (ID: {estadisticas.UsuarioTopComentarios.UsuarioId})";
-            TxtNotificacionesPendientes.Text = $"🔔 Notificaciones no leídas: {estadisticas.NotificacionesPendientes}";
-            TxtUsuarioTopReacciones.Text = $"❤️ Usuario con más reacciones: {estadisticas.UsuarioTopReacciones.Nombre} (ID: {estadisticas.UsuarioTopReacciones.UsuarioId})";
-
-            GraficaRecursos.Series = new SeriesCollection();
-            GraficaRecursos.AxisX.Clear();
-            GraficaRecursos.AxisY.Clear();
-
-            var etiquetas = new List<string>();
-
-            foreach (var recurso in estadisticas.RecursosPorTipo)
+            try
             {
-                GraficaRecursos.Series.Add(new ColumnSeries
+                if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
                 {
-                    Title = recurso.Tipo,
-                    Values = new ChartValues<int> { recurso.Total },
-                    DataLabels = true
+                    MessageBox.Show("No se pudo establecer conexión. Verifica tu conexión a Internet.", "Sin conexión", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                var servicio = new EstadisticaGrpcService();
+                var estadisticas = await servicio.ObtenerEstadisticasAsync();
+
+                TxtTopLikes.Text = $"📌 ID publicación con más likes: {estadisticas.TopLikes.PublicacionId} ({estadisticas.TopLikes.Total} likes)";
+                TxtTopComentarios.Text = $"💬 ID publicación con más comentarios: {estadisticas.TopComentarios.PublicacionId} ({estadisticas.TopComentarios.Total} comentarios)";
+                TxtTotalPublicaciones.Text = $"📝 Total de publicaciones: {estadisticas.TotalPublicaciones}";
+                TxtDiaTop.Text = $"📅 Día con más publicaciones: {estadisticas.DiaConMasPublicaciones} ({estadisticas.PublicacionesEnEseDia})";
+                TxtUsuarioTopPublicaciones.Text = $"👤 Usuario con más publicaciones: {estadisticas.UsuarioTopPublicaciones.Nombre} (ID: {estadisticas.UsuarioTopPublicaciones.UsuarioId})";
+                TxtUsuarioTopComentarios.Text = $"💬 Usuario con más comentarios: {estadisticas.UsuarioTopComentarios.Nombre} (ID: {estadisticas.UsuarioTopComentarios.UsuarioId})";
+                TxtNotificacionesPendientes.Text = $"🔔 Notificaciones no leídas: {estadisticas.NotificacionesPendientes}";
+                TxtUsuarioTopReacciones.Text = $"❤️ Usuario con más reacciones: {estadisticas.UsuarioTopReacciones.Nombre} (ID: {estadisticas.UsuarioTopReacciones.UsuarioId})";
+
+                GraficaRecursos.Series = new SeriesCollection();
+                GraficaRecursos.AxisX.Clear();
+                GraficaRecursos.AxisY.Clear();
+
+                var etiquetas = new List<string>();
+
+                foreach (var recurso in estadisticas.RecursosPorTipo)
+                {
+                    GraficaRecursos.Series.Add(new ColumnSeries
+                    {
+                        Title = recurso.Tipo,
+                        Values = new ChartValues<int> { recurso.Total },
+                        DataLabels = true
+                    });
+
+                    etiquetas.Add(recurso.Tipo);
+                }
+
+                GraficaRecursos.AxisX.Add(new Axis
+                {
+                    Title = "Tipo de recurso",
+                    Labels = etiquetas
                 });
 
-                etiquetas.Add(recurso.Tipo);
+                GraficaRecursos.AxisY.Add(new Axis
+                {
+                    Title = "Total",
+                    LabelFormatter = value => value.ToString("N0")
+                });
             }
-
-            GraficaRecursos.AxisX.Add(new Axis
+            catch (Exception ex)
             {
-                Title = "Tipo de recurso",
-                Labels = etiquetas
-            });
-
-            GraficaRecursos.AxisY.Add(new Axis
-            {
-                Title = "Total",
-                LabelFormatter = value => value.ToString("N0")
-            });
+                MessageBox.Show("Error al intentar conectar con el servidor, contacte con el soporte o espere que se restablezca.\n\n" + ex.Message,
+                                "Error del servidor",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+            }
         }
 
         private void BtnExportarPDF_Click(object sender, RoutedEventArgs e)
@@ -91,7 +108,7 @@ namespace ClienteAminoExo.Paginas
             AgregarParrafo(doc, TxtUsuarioTopReacciones.Text);
             AgregarParrafo(doc, TxtNotificacionesPendientes.Text);
 
-            doc.Add(new Paragraph(" ", FontFactory.GetFont(FontFactory.HELVETICA, 8))); // Separador
+            doc.Add(new Paragraph(" ", FontFactory.GetFont(FontFactory.HELVETICA, 8)));
 
             PdfPTable tabla = new PdfPTable(2);
             tabla.WidthPercentage = 100;

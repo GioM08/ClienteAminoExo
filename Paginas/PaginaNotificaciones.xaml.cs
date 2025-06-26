@@ -39,7 +39,14 @@ namespace ClienteAminoExo.Paginas
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al obtener datos del usuario: " + ex.Message);
+                if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+                {
+                    MessageBox.Show("No se pudo establecer conexión. Verifica tu conexión a Internet.", "Sin conexión", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+                else
+                {
+                    MessageBox.Show("Error al enviar comentario, contacte con el soporte o espere que se restablezca", "Error del servidor", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
@@ -47,7 +54,7 @@ namespace ClienteAminoExo.Paginas
         {
             try
             {
-                var respuesta = await _notificacionService.ObtenerNotificacionesAsync(usuarioId, leida: null); // Obtener todas
+                var respuesta = await _notificacionService.ObtenerNotificacionesAsync(usuarioId, leida: null);
                 notificaciones = new ObservableCollection<NotificacionRestService.Notificacion>(respuesta.resultados);
                 ListaNotificaciones.ItemsSource = notificaciones;
 
@@ -55,7 +62,14 @@ namespace ClienteAminoExo.Paginas
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al cargar notificaciones: " + ex.Message);
+                if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+                {
+                    MessageBox.Show("No se pudo establecer conexión. Verifica tu conexión a Internet.", "Sin conexión", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+                else
+                {
+                    MessageBox.Show("Error al enviar comentario, contacte con el soporte o espere que se restablezca", "Error del servidor", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 

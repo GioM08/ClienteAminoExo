@@ -64,7 +64,14 @@ namespace ClienteAminoExo.Paginas
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al obtener el perfil: " + ex.Message);
+                if(!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+                {
+                    MessageBox.Show("No se pudo establecer conexión. Verifica tu conexión a Internet.", "Sin conexión", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+                else
+                {
+                    MessageBox.Show("Error al intentar conectar con el servidor, contacte con el soporte o espere que se restablezca", "Error del servidor", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
@@ -147,7 +154,14 @@ namespace ClienteAminoExo.Paginas
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Error al eliminar publicación: {ex.Message}");
+                        if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+                        {
+                            MessageBox.Show("No se pudo establecer conexión. Verifica tu conexión a Internet.", "Sin conexión", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Error al eliminar publicación, contacte con el soporte o espere que se restablezca", "Error del servidor", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
                     }
                 }
 
